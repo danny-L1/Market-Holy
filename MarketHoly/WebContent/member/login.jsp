@@ -15,7 +15,7 @@
                 <div class="panel-title">로그인</div>
             </div>
             <div class="panel-body">
-                <form id="login-form" method="post" action="/Semi-MarketHoly/member/login.do">
+                <form id="login-form" method="post" action="/member/login.do">
                     <div>
                         <input type="text" class="form-control" name="id" placeholder="아이디를 입력해주세요" autofocus>
                     </div>

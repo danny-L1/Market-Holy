@@ -56,6 +56,7 @@ h1, h2, h3 {
 	text-decoration: none;
 }
 </style>
+
 <div id="imgwrap">
 	<div class="info" id="img">
 		<img src="${pageContext.request.contextPath }/img/${dto.thumb_save}" id="img" >
@@ -66,7 +67,7 @@ h1, h2, h3 {
 		<div class="row">
 			<div class="well col-md-8 form-inline form-group">
 				<div class="form-group">
-					<span class="label label-success">관리자 메뉴</span>
+					<span>관리자 메뉴</span>
 					<input type="button" class="btn btn-default" value="상품 수정" id="btnModify" data-toggle='modal' data-target='#prodModify'>
 					<input type="button" class="btn btn-default" value="상품 삭제" id="btnDelete">
 				</div>
@@ -90,6 +91,7 @@ h1, h2, h3 {
 	</h4>
 	<br>
 	<input type="hidden" id="price" value="${dto.price }">
+	<input type="hidden" id="stock" value="${dto.stock }">
 	<p class='text-muted' style="font-size: 0.9em;">
 		<!-- 판매단위 1팩
 		<br>
@@ -245,7 +247,13 @@ h1, h2, h3 {
 		var EA = document.getElementById("EA");
 		var price = document.getElementById("price").value;
 		var sum = document.getElementById("sum");
-		EA.innerHTML = parseInt(EA.innerHTML) + 1;
+		var stock = document.getElementById("stock").value;
+		
+		if (parseInt(EA.innerHTML) >= stock) {
+			alert("최대수량입니다");
+		} else {
+			EA.innerHTML = parseInt(EA.innerHTML) + 1;
+		}
 		sum.innerHTML = price * parseInt(EA.innerHTML);
 	}
 	function minus() {
