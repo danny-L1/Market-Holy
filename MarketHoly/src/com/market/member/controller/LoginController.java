@@ -1,6 +1,7 @@
 package com.market.member.controller;
 
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ public class LoginController extends HttpServlet{
 			HttpSession session = req.getSession();
 			session.setAttribute("memberDto", dto);
 			resp.sendRedirect(req.getContextPath()+"/main.do");
+			
 		}else if(dto.getId() == null){
 			resp.sendRedirect(req.getContextPath()+"/member/loginResult.jsp");
 		}	
