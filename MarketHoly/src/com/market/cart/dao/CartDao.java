@@ -20,7 +20,7 @@ public class CartDao {
 		PreparedStatement pstmt = null;
 		try {
 			con = JDBCUtil.getConn();
-			pstmt = con.prepareStatement("insert into cart values(seq_cart_num.nextval,?,?,?)");
+			pstmt = con.prepareStatement("insert into cart values(0,?,?,?)");
 			pstmt.setInt(1, pnum);
 			pstmt.setString(2, id);
 			pstmt.setInt(3, EA);

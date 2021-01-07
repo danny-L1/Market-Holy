@@ -26,7 +26,7 @@ public class ProdDao {
 		try {
 			con = JDBCUtil.getConn();
 			con.setAutoCommit(false);
-			String sql = "insert into product values(seq_product_pnum.nextval,?,?,?,?,?,?,?,?,?,?,sysdate,'N')";
+			String sql = "insert into product values(0,?,?,?,?,?,?,?,?,?,?,now(),'N')";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, dto.getCnum());
 			pstmt.setInt(2, dto.getType());
@@ -40,7 +40,7 @@ public class ProdDao {
 			pstmt.setString(10, dto.getDetail_save());
 			int n = pstmt.executeUpdate();
 			if (n > 0) {
-				String sql1 = "insert into prod_info values(seq_product_pnum.CURRVAL,?,?,?,?,?,?)";
+				String sql1 = "insert into prod_info values(0,?,?,?,?,?,?)";
 				pstmt1 = con.prepareStatement(sql1);
 				pstmt1.setString(1, infoDto.getUnit());
 				pstmt1.setString(2, infoDto.getVolume());

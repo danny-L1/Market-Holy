@@ -160,8 +160,9 @@ public class ProductDao {
 		try {
 			con = JDBCUtil.getConn();
 
-			sql = "select * from(select p.*,rownum rnum from (select p.*,nvl(s.percent,1)percent "
-					+ " from product p left outer join sale s on(p.pnum = s.pnum) where 1=1"; 
+			sql = "select * from (select p.*,ifnull(s.percent,1)percent \r\n" + 
+					"from product p left outer join sale s on(p.pnum = s.pnum)\r\n" + 
+					"where 1=1"; 
 			if (type == -1) {
 				sql += "and type=?";
 				paramList.add(cnum);
@@ -193,7 +194,7 @@ public class ProductDao {
 				break;
 			}
 
-			sql += "order by " + sort + ")p ) where rnum>=? and rnum<=? order by " + sort;
+			sql += " order by " + sort + ")p limit ?,?";
 
 			paramList.add(startRow);
 			paramList.add(endRow);
@@ -242,10 +243,11 @@ public class ProductDao {
 		try {
 			con = JDBCUtil.getConn();
 			if (filter.equals("new")) {
-				sql = "select * from (select p.*,rownum rnum from (select p.*,nvl(s.percent,1)percent " + 
-						"from product p left outer join sale s on(p.pnum = s.pnum) " + 
-						"where reg_date between sysdate-7 and sysdate and p.del_yn='N' " + 
-						"order by reg_date desc)p ) where rnum>=? and rnum<=?";
+				sql = "select p.*,ifnull(s.percent,1)percent \r\n" + 
+						"from product p left outer join sale s on(p.pnum = s.pnum) \r\n" + 
+						"where reg_date between now()-7 and now() and p.del_yn='N' \r\n" + 
+						"order by reg_date desc\r\n" + 
+						"limit "+startRow+","+endRow;
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 				pstmt.setInt(2, endRow);
@@ -264,11 +266,14 @@ public class ProductDao {
 							new ProductDto(pnum, name, reg_date, price, stock, thumb_save, description, percent));
 				}
 			}else if(filter.equals("best")) {
-				sql = "select * from(select aa.*,rownum rnum from " + 
-						"(select a.*,b.percent from(select p.pnum,p.name pname,p.reg_date,p.price,p.stock,p.thumb_save,p.description,NVL(count(op.pnum),0)cnt " + 
-						"from order_product op,product p " + 
-						"where p.pnum=op.pnum group by p.pnum,p.name,p.reg_date,p.price,p.stock,p.thumb_save,p.description order by NVL(count(op.pnum),0)desc)a, sale b " + 
-						"where a.pnum = b.pnum)aa) where rnum>=? and rnum<=?";
+				sql = "select * from(select a.*,b.percent \r\n" + 
+						"from(select p.pnum,p.name pname,p.reg_date,p.price,p.stock,p.thumb_save,p.description,\r\n" + 
+						"ifnull(count(op.pnum),0)cnt  \r\n" + 
+						"from order_product op,product p \r\n" + 
+						"where p.pnum=op.pnum group by p.pnum,p.name,p.reg_date,p.price,p.stock,p.thumb_save,\r\n" + 
+						"p.description order by ifnull(count(op.pnum),0)desc)a, sale b \r\n" + 
+						"where a.pnum = b.pnum)aa\r\n" + 
+						"limit "+startRow+","+endRow;
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 				pstmt.setInt(2, endRow);
@@ -288,10 +293,11 @@ public class ProductDao {
 							new ProductDto(pnum, name, reg_date, price, stock, thumb_save, description, percent));
 				}
 			} else if (filter.equals("sale")) {
-				sql = "select * from(select aa.*,rownum rnum from"
-						+ "(select p.pnum,p.name pname,p.reg_date,p.price,p.stock,p.thumb_save,p.description,s.percent "
-						+ "from product p,sale s where p.pnum=s.pnum and p.del_yn='N'"
-						+ "order by p.reg_date desc)aa) where rnum>=? and rnum<=?";
+				sql = "select p.pnum,p.name pname,p.reg_date,p.price,p.stock,p.thumb_save,\r\n" + 
+						"p.description,s.percent \r\n" + 
+						"from product p,sale s where p.pnum=s.pnum and p.del_yn='N'\r\n" + 
+						"order by p.reg_date desc\r\n" + 
+						"limit "+startRow+","+endRow;
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 				pstmt.setInt(2, endRow);
@@ -330,10 +336,10 @@ public class ProductDao {
 		try {
 			con = JDBCUtil.getConn();
 
-			String sql = "select * from(select aa.*,rownum rnum from "
-					+ "(select p.*,nvl(s.percent,1)percent from product p " + 
-					"left outer join sale s on(p.pnum = s.pnum) " + 
-					" where p.name like ? and p.del_yn='N')aa ) where rnum>=? and rnum<=?";
+			String sql = "select p.*,ifnull(s.percent,1)percent from product p \r\n" + 
+					"left outer join sale s on(p.pnum = s.pnum)\r\n" + 
+					"where p.name like ? and p.del_yn='N'\r\n" + 
+					"limit "+startRow+","+endRow;
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, "%" + keyword + "%");
 			pstmt.setInt(2, startRow);

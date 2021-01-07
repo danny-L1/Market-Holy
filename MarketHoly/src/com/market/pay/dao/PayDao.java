@@ -18,7 +18,7 @@ public class PayDao {
 
 		try {
 			con = JDBCUtil.getConn();
-			pstmt = con.prepareStatement("insert into order_product values(seq_order_product_opnum.nextval,?,?,?,?,?)");
+			pstmt = con.prepareStatement("insert into order_product values(0,?,?,?,?,?)");
 			pstmt.setInt(2, dto.getPnum());
 			pstmt.setString(3, dto.getPname());
 			pstmt.setInt(4, dto.getEA());
@@ -66,7 +66,7 @@ public class PayDao {
 
 		try {
 			con = JDBCUtil.getConn();
-			pstmt2 = con.prepareStatement("insert into orders values(seq_orders_onum.nextval,?,1,?,sysdate,null,?,?,?,?,?,?)");
+			pstmt2 = con.prepareStatement("insert into orders values(0,?,1,?,now(),null,?,?,?,?,?,?)");
 			pstmt2.setInt(1, odto.getNum());
 			pstmt2.setString(2, odto.getPay_yn());
 			pstmt2.setString(3, odto.getId());
@@ -78,7 +78,7 @@ public class PayDao {
 			int n = pstmt2.executeUpdate();
 			
 			for(int i=0;i<pPnum.length;i++) {
-				pstmt1 = con.prepareStatement("insert into order_product values(seq_order_product_opnum.nextval,seq_orders_onum.currval,?,?,?,?)");
+				pstmt1 = con.prepareStatement("insert into order_product values(0,seq_orders_onum.currval,?,?,?,?)");
 				pstmt1.setInt(1, Integer.parseInt(pPnum[i]));
 				pstmt1.setString(2, pPname[i]);
 				pstmt1.setInt(3, Integer.parseInt(pEA[i]));

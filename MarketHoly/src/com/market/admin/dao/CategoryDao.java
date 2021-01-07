@@ -118,7 +118,7 @@ public class CategoryDao {
 		PreparedStatement pstmt = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "insert into category values(seq_category_cnum_type.nextval,-1,?,'N')";
+			String sql = "insert into category values(0,-1,?,'N')";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, catName);
 			return pstmt.executeUpdate();
@@ -136,7 +136,7 @@ public class CategoryDao {
 		PreparedStatement pstmt = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "insert into category values(seq_category_cnum_type.nextval,?,?,'N')";
+			String sql = "insert into category values(0,?,?,'N')";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, dto.getType());
 			pstmt.setString(2, dto.getName());

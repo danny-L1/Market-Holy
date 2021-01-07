@@ -27,7 +27,7 @@ public class MemberDao {
 
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "update member set del_yn='Y',del_date=sysdate where id=?";
+			String sql = "update member set del_yn='Y',del_date=now() where id=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, ids);
 			int n = pstmt.executeUpdate();
@@ -367,7 +367,6 @@ public class MemberDao {
 		PreparedStatement pstmt1 = null;
 		PreparedStatement pstmt2 = null;
 		ResultSet rs = null;
-
 		try {
 			con = JDBCUtil.getConn();
 			String sql1 = "select id,del_yn from member where id = ?";
@@ -382,7 +381,7 @@ public class MemberDao {
 			}
 			pstmt1.close();
 
-			String sql = "insert into member values(seq_member_num.nextval,?,?,?,?,?,?,?,?,?,sysdate,?,?,'')";
+			String sql = "insert into member values(0,?,?,?,?,?,?,?,?,?,now(),?,?,"+"0000-00-00"+")";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, dto.getId());
 			pstmt.setString(2, dto.getPwd());
@@ -400,7 +399,7 @@ public class MemberDao {
 			return n;
 
 		} catch (SQLException se) {
-			se.getStackTrace();
+			System.out.println(se.getMessage());
 			return -1;
 		} finally {
 			JDBCUtil.close(null, pstmt, con);
@@ -442,11 +441,11 @@ public class MemberDao {
 			con = JDBCUtil.getConn();
 			String sql = "";
 			if (word.equals("")) {
-				sql = "select * from (select a.*,rownum rnum from(select * from member order by num desc)a) where rnum >= "
-						+ startRow + " and rnum <= " + endRow;
+				sql = "select * from member order by num desc limit"
+						+ startRow + "," + endRow;
 			} else {
-				sql = "select * from (select a.*,rownum rnum from(select * from member where " + type + " like '%"
-						+ word + "%' order by num desc)a) where rnum >= " + startRow + " and rnum <= " + endRow;
+				sql = "select * from member where type like CONCAT('%',"+ type +",'%') order by num desc\r\n" + 
+						"limit" + startRow + "," + endRow;
 			}
 
 			pstmt = con.prepareStatement(sql);
@@ -483,7 +482,7 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "update member set del_yn = 'Y',del_date=sysdate where num = ?";
+			String sql = "update member set del_yn = 'Y',del_date=now() where num = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			return pstmt.executeUpdate();

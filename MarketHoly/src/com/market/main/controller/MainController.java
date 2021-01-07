@@ -37,7 +37,6 @@ public class MainController extends HttpServlet {
 		ProductDao pdao = new ProductDao();
 		ArrayList<ProductDto> list = pdao.getList(1, 3, null, 0, 0);
 		req.setAttribute("list", list);
-		
 		req.getRequestDispatcher("/index.jsp").forward(req, resp);
 	}
 }

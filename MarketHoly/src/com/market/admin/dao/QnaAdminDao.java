@@ -199,7 +199,7 @@ public class QnaAdminDao {
 			pstmt2.setInt(1, dto.getQnum());
 			int n = pstmt2.executeUpdate();
 			if (n > 0) {
-				String sql = "insert into qna values(?,?,?,?,'관리자',?,?,?,sysdate,'N','N')";
+				String sql = "insert into qna values(?,?,?,?,'관리자',?,?,?,now(),'N','N')";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, dto.getPnum());
 				pstmt.setInt(2, dto.getNum());

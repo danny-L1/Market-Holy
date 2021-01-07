@@ -29,7 +29,7 @@ public class SaleDao {
 		try {
 			con = JDBCUtil.getConn();
 			String sql = "INSERT INTO sale \r\n" + 
-					"SELECT seq_sale_snum.nextval, \r\n" + 
+					"SELECT 0, \r\n" + 
 					"       ?, \r\n" + 
 					"       ?, \r\n" + 
 					"       ?, \r\n" + 
@@ -132,7 +132,7 @@ public class SaleDao {
 		PreparedStatement pstmt = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "insert into sale select seq_sale_snum.nextval,?,?,?,?,?,'N' from dual where not exists(select pnum from sale where pnum=? and del_yn='N')";
+			String sql = "insert into sale select 0,?,?,?,?,?,'N' from dual where not exists(select pnum from sale where pnum=? and del_yn='N')";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, dto.getPnum());
 			pstmt.setString(2, dto.getName());
