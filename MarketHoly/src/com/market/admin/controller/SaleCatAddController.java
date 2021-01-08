@@ -45,7 +45,7 @@ public class SaleCatAddController extends HttpServlet {
 		
 		ProductDao dao = new ProductDao();
 		int endRow = dao.getCount(cnum, type, "");
-		ArrayList<ProductDto> list = dao.getList(0, endRow, "", cnum, type);
+		ArrayList<ProductDto> list = dao.getList(0, "", cnum, type);
 		SaleDao saleDao = SaleDao.getInstance();
 		int resultCnt = 0;
 		for (ProductDto dto : list) {

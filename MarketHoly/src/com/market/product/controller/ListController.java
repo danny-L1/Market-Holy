@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import com.market.admin.dao.CategoryDao;
 import com.market.admin.dto.CategoryDto;
 import com.market.member.dto.MemberDto;
+import com.market.page.util.PageUtil;
 import com.market.product.dao.ProductDao;
 import com.market.product.dto.ProductDto;
 
@@ -41,41 +42,34 @@ public class ListController extends HttpServlet {
 		if (sType != null) {
 			type = Integer.parseInt(sType);
 		}
-		
-		// 페이징
+
+
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * 9 ;
-		int endRow = startRow + 6;
-
 		ProductDao dao = new ProductDao();
-		ArrayList<ProductDto> list = dao.getList(startRow, endRow, list_filter, cnum, type);
-
-		int pageCount = (int) Math.ceil(dao.getCount(cnum, type,"") / 9.0);
-		int startPageNum = ((pageNum - 1) / 5) * 5 + 1;
-		int endPageNum = startPageNum + 4;
-		if (pageCount < endPageNum) {
-			endPageNum = pageCount;
-		}
+		int totalRowCount=dao.getCount(cnum, type,"");
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int startRow=pu.getStartRow()-1;
+		ArrayList<ProductDto> list = dao.getList(startRow, list_filter, cnum, type);
+	
 		// 카테고리 이름 가져오기
 		CategoryDao cdao = CategoryDao.getInstance();
 		//cnum에 해당하는 세부 카테고리 가져오기
 		ArrayList<CategoryDto> clist = cdao.selSub(cnum);
 		String cname = cdao.getName(type); //선택된 카테고리 이름
 		String tname = cdao.getName(cnum); //선택된 세부카테고리 이름
-
+		
 		req.setAttribute("id", id);
 		req.setAttribute("cname", cname);
 		req.setAttribute("tname", tname);
 		req.setAttribute("cnum", cnum);
 		req.setAttribute("type", type);
 		req.setAttribute("list", list);
-		req.setAttribute("pageCount", pageCount);
-		req.setAttribute("startPageNum", startPageNum);
-		req.setAttribute("endPageNum", endPageNum);
+		req.setAttribute("pu", pu);
+
 		req.setAttribute("pageNum", pageNum);
 		req.setAttribute("list_filter", list_filter);
 		

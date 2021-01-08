@@ -91,7 +91,7 @@ public class ProductDao {
 			con = JDBCUtil.getConn();
 			sql = "select ifnull(count(p.pnum),0) cnt from product p";
 			if (filter.equals("new")) {
-				sql += " where reg_date between now()-7 and now()";
+				sql += " where reg_date between DATE_SUB(now(), interval 7 day) and now()";
 
 			} else if (filter.equals("best")) {
 				sql += ",order_product op where p.pnum=op.pnum group by p.pnum";
@@ -150,7 +150,7 @@ public class ProductDao {
 		}
 	}
 
-	public ArrayList<ProductDto> getList(int startRow, int endRow, String list_filter, int cnum, int type) {
+	public ArrayList<ProductDto> getList(int startRow, String list_filter, int cnum, int type) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -194,10 +194,9 @@ public class ProductDao {
 				break;
 			}
 
-			sql += " order by " + sort + " limit ?,?";
+			sql += " order by " + sort + " limit ?,6";
 
 			paramList.add(startRow);
-			paramList.add(6);
 			pstmt = con.prepareStatement(sql);
 
 			ListIterator<Integer> iter = paramList.listIterator();
@@ -234,7 +233,7 @@ public class ProductDao {
 	}
 
 	// 신상품,베스트,세일상품 리스트
-	public ArrayList<ProductDto> getNBSList(int startRow, int endRow, String filter) {
+	public ArrayList<ProductDto> getNBSList(int startRow, String filter) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -246,10 +245,9 @@ public class ProductDao {
 				sql = "select p.*,ifnull(s.percent,1)percent  \r\n" + 
 						"from product p left outer join sale s on p.pnum = s.pnum\r\n" + 
 						"between date(now()-7) and date(now())\r\n" + 
-						"and p.del_yn='N' limit ?,?";
+						"and p.del_yn='N' limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
-				pstmt.setInt(2, 5);
 				rs = pstmt.executeQuery();
 
 				while (rs.next()) {
@@ -272,10 +270,10 @@ public class ProductDao {
 						"where p.pnum=op.pnum group by p.pnum,p.name,p.reg_date,p.price,p.stock,p.thumb_save,\r\n" + 
 						"p.description order by ifnull(count(op.pnum),0)desc)a, sale b \r\n" + 
 						"where a.pnum = b.pnum)aa\r\n" + 
-						" limit ?,?";
+						" limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
-				pstmt.setInt(2, endRow);
+
 
 				rs = pstmt.executeQuery();
 
@@ -296,10 +294,9 @@ public class ProductDao {
 						"p.description,s.percent \r\n" + 
 						"from product p,sale s where p.pnum=s.pnum and p.del_yn='N'\r\n" + 
 						"order by p.reg_date desc\r\n" + 
-						" limit ?,?";
+						" limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
-				pstmt.setInt(2, endRow);
 
 				rs = pstmt.executeQuery();
 
@@ -327,7 +324,7 @@ public class ProductDao {
 	}
 
 	// 검색 리스트
-	public ArrayList<ProductDto> getSearchList(int startRow, int endRow, String keyword) {
+	public ArrayList<ProductDto> getSearchList(int startRow, String keyword) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -338,11 +335,10 @@ public class ProductDao {
 			String sql = "select p.*,ifnull(s.percent,1)percent from product p \r\n" + 
 					"left outer join sale s on(p.pnum = s.pnum)\r\n" + 
 					"where p.name like ? and p.del_yn='N'\r\n" + 
-					"limit ?,?";
+					"limit ?,6";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, "%" + keyword + "%");
 			pstmt.setInt(2, startRow);
-			pstmt.setInt(3, endRow);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {

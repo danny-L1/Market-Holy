@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.market.page.util.PageUtil;
 import com.market.product.dao.ProductDao;
 import com.market.product.dto.ProductDto;
 @WebServlet("/product/nbs.do")
@@ -20,28 +21,39 @@ public class NBSController extends HttpServlet{
 		//3.세일상품
 		String filter=req.getParameter("filter");
 		
+//		String spageNum = req.getParameter("pageNum");
+//		int pageNum = 1;
+//		if (spageNum != null) {
+//			pageNum = Integer.parseInt(spageNum);
+//		}
+//		int startRow = (pageNum - 1) * 9 ;
+//		int endRow = startRow + 5;
+//
+//		ProductDao dao = new ProductDao();
+//		ArrayList<ProductDto> list = dao.getNBSList(startRow, endRow,filter);
+//		int pageCount = (int) Math.ceil(dao.getNBSCount(filter) / 9.0);
+//		int startPageNum = ((pageNum - 1) / 5) * 5 + 1;
+//		int endPageNum = startPageNum + 4;
+//		if (pageCount < endPageNum) {
+//			endPageNum = pageCount;
+//		}
+//		
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * 9 ;
-		int endRow = startRow + 5;
-
 		ProductDao dao = new ProductDao();
-		ArrayList<ProductDto> list = dao.getNBSList(startRow, endRow,filter);
-		int pageCount = (int) Math.ceil(dao.getNBSCount(filter) / 9.0);
-		int startPageNum = ((pageNum - 1) / 5) * 5 + 1;
-		int endPageNum = startPageNum + 4;
-		if (pageCount < endPageNum) {
-			endPageNum = pageCount;
-		}
+		int totalRowCount=dao.getNBSCount(filter);
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int startRow = pu.getStartRow()-1;
+		ArrayList<ProductDto> list = dao.getNBSList(startRow, filter);
+	
+
 		
 		req.setAttribute("filter", filter);
+		req.setAttribute("pu", pu);
 		req.setAttribute("list", list);
-		req.setAttribute("pageCount", pageCount);
-		req.setAttribute("startPageNum", startPageNum);
-		req.setAttribute("endPageNum", endPageNum);
 		req.setAttribute("pageNum", pageNum);
 		req.getRequestDispatcher("/index.jsp?page=product/nbs_list.jsp").forward(req, resp);
 	}

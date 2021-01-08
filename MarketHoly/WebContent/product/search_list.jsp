@@ -16,7 +16,7 @@
 <h1>상품검색</h1>
 <h4>신선한 홀리의 상품을 검색해보세요.</h4>
 <hr style="border: solid 1px RebeccaPurple;">
-총 ${result }개의 상품이 검색되었습니다.
+총 ${pu.getTotalRowCount() }개의 상품이 검색되었습니다.
 
 <div class="container">
 	<div class="row">
@@ -71,15 +71,15 @@
 <!-- 페이징 -->
 <div>
 	<ul class="pagination pagination-lg">
-		<li class="page-item"><c:if test="${pageNum>1}">
+		<li class="page-item"><c:if test="${pu.pageNum > pu.startPageNum}">
 				<li class="page-item"><a
-					href="${cp }/product/search.do?pageNum=${pageNum-1}&keyword=${keyword}">
+					href="${cp }/product/search.do?pageNum=${pu.pageNum-1}&keyword=${keyword}">
 						&laquo; </a>
 			</c:if></li>
 
-		<c:forEach var="i" begin="${startPageNum }" end="${endPageNum }">
+		<c:forEach var="i" begin="${pu.startPageNum }" end="${pu.endPageNum }">
 			<c:choose>
-				<c:when test="${i==pageNum }">
+				<c:when test="${i==pu.pageNum }">
 					<li class="page-item active"><a
 						href="${cp }/product/search.do?pageNum=${i}&keyword=${keyword}">
 							<span style='color: white'>${i}</span>
@@ -94,9 +94,9 @@
 			</c:choose>
 		</c:forEach>
 
-		<c:if test="${pageCount>endPageNum}">
+		<c:if test="${pu.totalPageCount>pu.pageNum }">
 			<li class="page-item"><a
-				href="${cp }/product/search.do?pageNum=${pageNum+1}&keyword=${keyword}">
+				href="${cp }/product/search.do?pageNum=${pu.pageNum+1}&keyword=${keyword}">
 					&raquo;</a></li>
 		</c:if>
 	</ul>

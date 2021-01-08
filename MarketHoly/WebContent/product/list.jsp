@@ -98,15 +98,15 @@
 <!-- 페이징 -->
 <div>
 	<ul class="pagination pagination-lg">
-		<li class="page-item"><c:if test="${pageNum>1}">
+		<li class="page-item"><c:if test="${pu.pageNum > pu.startPageNum}">
 				<li class="page-item"><a
-					href="${cp }/product/list.do?pageNum=${pageNum-1}&cnum=${cnum }&type=${type }">
+					href="${cp }/product/list.do?pageNum=${pu.pageNum-1}&cnum=${cnum }&type=${type }">
 						&laquo; </a>
 			</c:if></li>
 
-		<c:forEach var="i" begin="${startPageNum }" end="${endPageNum }">
+		<c:forEach var="i" begin="${pu.startPageNum }" end="${pu.endPageNum }">
 			<c:choose>
-				<c:when test="${i==pageNum }">
+				<c:when test="${i==pu.pageNum }">
 					<li class="page-item active"><a
 						href="${cp }/product/list.do?pageNum=${i}&cnum=${cnum }&type=${type }">
 							<span style='color: white'>${i}</span>
@@ -121,9 +121,9 @@
 			</c:choose>
 		</c:forEach>
 
-		<c:if test="${pageCount>endPageNum}">
+		<c:if test="${pu.totalPageCount>pu.pageNum }">
 			<li class="page-item"><a
-				href="${cp }/product/list.do?pageNum=${pageNum+1}&cnum=${cnum }&type=${type }">
+				href="${cp }/product/list.do?pageNum=${pu.pageNum+1}&cnum=${cnum }&type=${type }">
 					&raquo;</a></li>
 		</c:if>
 	</ul>

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import com.market.admin.dao.CategoryDao;
 import com.market.admin.dto.CategoryDto;
 import com.market.member.dto.MemberDto;
+import com.market.page.util.PageUtil;
 import com.market.product.dao.ProductDao;
 import com.market.product.dto.ProductDto;
 @WebServlet("/product/search.do")
@@ -26,31 +27,23 @@ public class SearchController extends HttpServlet{
 			id=memberDto.getId();
 		}
 		String keyword=req.getParameter("keyword");
-		// 페이징
+	
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * 9 + 1;
-		int endRow = startRow + 8;
-
 		ProductDao dao = new ProductDao();
-		ArrayList<ProductDto> list = dao.getSearchList(startRow, endRow, keyword);
-		int result = dao.getCount(0, 0, keyword);
-		int pageCount = (int) Math.ceil(dao.getCount(0, 0, keyword) / 9.0);
-		int startPageNum = ((pageNum - 1) / 5) * 5 + 1;
-		int endPageNum = startPageNum + 4;
-		if (pageCount < endPageNum) {
-			endPageNum = pageCount;
-		}
+		int totalRowCount=dao.getCount(0, 0, keyword);
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int startRow = pu.getStartRow()-1;
+		ArrayList<ProductDto> list = dao.getSearchList(startRow, keyword);
+		
+		
 		req.setAttribute("keyword", keyword);
 		req.setAttribute("id", id);
 		req.setAttribute("list", list);
-		req.setAttribute("result", result);
-		req.setAttribute("pageCount", pageCount);
-		req.setAttribute("startPageNum", startPageNum);
-		req.setAttribute("endPageNum", endPageNum);
+		req.setAttribute("pu", pu);
 		req.setAttribute("pageNum", pageNum);
 		
 		req.getRequestDispatcher("/index.jsp?page=product/search_list.jsp").forward(req, resp);
