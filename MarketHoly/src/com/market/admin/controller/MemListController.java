@@ -32,6 +32,7 @@ public class MemListController extends HttpServlet{
 		int startRow = (pageNum - 1) * PAGE_CNT + 1;
 		int endRow = (startRow + PAGE_CNT) - 1;
 		
+		
 		String word = req.getParameter("word");
 		String type = req.getParameter("type");
 		MemberDao dao = MemberDao.getInstance();

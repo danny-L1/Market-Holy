@@ -523,7 +523,7 @@ public class MemberDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select nvl(count(*),0) cnt from member";
+			String sql = "select ifnull(count(*),0) cnt from member";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			rs.next();

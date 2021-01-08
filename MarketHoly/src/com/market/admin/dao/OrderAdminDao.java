@@ -120,7 +120,7 @@ public class OrderAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT Nvl(Count(*), 0) cnt \r\n" + 
+			String sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
 					" FROM   orders a WHERE  status IN("+status+")";
 			
 			pstmt = con.prepareStatement(sql);
@@ -151,7 +151,7 @@ public class OrderAdminDao {
 			int n = 0;
 			String sql = "update orders set status = ?, end_date = null where onum = ?";
 			if (status == 5 || status == 6) {
-				sql = "update orders set status = ?, end_date = sysdate where onum = ?";
+				sql = "update orders set status = ?, end_date = now() where onum = ?";
 			}
 
 			for (int i = 0; i < onums.length; i++) {
@@ -189,7 +189,7 @@ public class OrderAdminDao {
 					pstmt1.executeUpdate();
 
 					// 등급 수정
-					String sql2 = "SELECT nvl(Sum(price),0) totalPurchase \r\n" 
+					String sql2 = "SELECT ifnull(Sum(price),0) totalPurchase \r\n" 
 							+ "FROM   orders \r\n"
 							+ "WHERE  1 = 1 \r\n"
 							+ "       AND status = 5 \r\n"
@@ -219,7 +219,7 @@ public class OrderAdminDao {
 					}
 				} else if (status == 6) {
 					// 포인트 검색 후 환급
-					String sql4 = "select nvl(max(use_point),0) use_point from orders where onum = ?";
+					String sql4 = "select ifnull(max(use_point),0) use_point from orders where onum = ?";
 					pstmt4 = con.prepareStatement(sql4);
 					pstmt4.setInt(1, onum);
 					rs2 = pstmt4.executeQuery();

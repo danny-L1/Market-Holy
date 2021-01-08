@@ -44,7 +44,7 @@ public class CartDao {
 		try {
 			con = JDBCUtil.getConn();
 			pstmt = con.prepareStatement(
-					"select id,c.pnum,name,EA,price,thumb_save,nvl((select sale.percent from sale where p.pnum=pnum),1)percent ,cartnum\r\n" + 
+					"select id,c.pnum,name,EA,price,thumb_save,ifnull((select sale.percent from sale where p.pnum=pnum),1)percent ,cartnum\r\n" + 
 					"from cart c , product p where c.pnum=p.pnum and id=?"
 					);
 			pstmt.setString(1, id);

@@ -29,6 +29,7 @@ public class OrderListController extends HttpServlet {
 		}
 		int startRow = (pageNum - 1) * PAGE_CNT + 1;
 		int endRow = (startRow + PAGE_CNT) - 1;
+		
 
 		String kind = req.getParameter("kind");
 		if (kind == null) {

@@ -171,7 +171,7 @@ public class MypageDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select NVL(count(qnum),0) cnt from qna where id=?";
+			String sql = "select ifnull(count(qnum),0) cnt from qna where id=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, ids);
 			rs = pstmt.executeQuery();
@@ -216,9 +216,7 @@ public class MypageDao {
 				Date reg_date = rs.getDate("reg_date");
 				String del_yn = rs.getString("del_yn");
 				String locker =rs.getString("locker");
-				int level = rs.getInt("level");
-				int rnum2 = rs.getInt("rnum2");
-				QnaDto dto = new QnaDto(pnum, pnum, qnum, id, name, title, content, ref, reg_date, del_yn, locker, level, rnum2); 			
+				QnaDto dto = new QnaDto(pnum, pnum, qnum, id, name, title, content, ref, reg_date, del_yn, locker); 			
 				list.add(dto);
 			}
 			return list;

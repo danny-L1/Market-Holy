@@ -19,16 +19,16 @@
 
 
 			</thead>
-
+			
 
 			<c:forEach var='vo' items='${list }'> 
 				<tbody>
-					<tr onclick="showHidden(${vo.rnum2},'${vo.id }','${vo.locker }')">
-						<c:set var="cNum" value="${vo.rnum2-1}"/>
-						<td>${count-cNum}</td>
+					<tr onclick="showHidden(${vo.qnum},'${vo.id }','${vo.locker }')">
+						<c:set var="cNum" value="${vo.qnum-1}"/>
+						<td>${count}</td>
 						<td>
-							<c:if test="${vo.level > 1 }">
-								<c:forEach var="i" begin="1" end="${vo.level - 1 }">
+							<c:if test="${vo.ref == -1 }">
+								<c:forEach var="i" begin="${startPageNum }" end="${endPageNum }">
 									[re]&nbsp;
 								</c:forEach> 
 							</c:if>
@@ -40,7 +40,7 @@
 						<td>${vo.id }</td>
 						<td>${vo.reg_date }</td>
 					</tr>
-					<tr id='${vo.rnum2 }' style='display: none;'>
+					<tr id='${vo.qnum }' style='display: none;'>
 						<td>${vo.content }</td>
 					</tr>
 				</tbody>
