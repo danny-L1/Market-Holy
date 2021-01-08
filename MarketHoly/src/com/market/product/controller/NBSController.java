@@ -25,8 +25,8 @@ public class NBSController extends HttpServlet{
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * 9 + 1;
-		int endRow = startRow + 8;
+		int startRow = (pageNum - 1) * 9 ;
+		int endRow = startRow + 5;
 
 		ProductDao dao = new ProductDao();
 		ArrayList<ProductDto> list = dao.getNBSList(startRow, endRow,filter);

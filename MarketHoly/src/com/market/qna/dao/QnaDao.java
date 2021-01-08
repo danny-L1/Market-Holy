@@ -28,7 +28,7 @@ public class QnaDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select NVL(max(qnum),0) maxnum from qna";
+			String sql = "select ifnull(max(qnum),0) maxnum from qna";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
@@ -55,15 +55,11 @@ public class QnaDao {
 			int ref = dto.getRef();
 			if (qnum == 0) { // 새글인 경우
 				ref = boardNum;
+			} else {
+				
 			}
 
-			/*
-			 * else { //답글인 경우 String sql1= "update qna set ref=1 where ref=?";
-			 * pstmt1=con.prepareStatement(sql1); pstmt1.setInt(1,ref);
-			 * pstmt1.executeUpdate(); }
-			 */
-
-			String sql2 = "insert into qna values(?,?,?,?,?,?,?,null,sysdate,'N',?)";
+			String sql2 = "insert into qna values(?,?,?,?,?,?,?,1,now(),'N',?)";
 			pstmt2 = con.prepareStatement(sql2);
 			pstmt2.setInt(1, dto.getPnum());
 			pstmt2.setInt(2, dto.getNum());
@@ -92,7 +88,7 @@ public class QnaDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select NVL(count(qnum),0) cnt from qna where pnum=?";
+			String sql = "select ifnull(count(qnum),0) cnt from qna where pnum=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, pnums);
 			rs = pstmt.executeQuery();
@@ -110,8 +106,10 @@ public class QnaDao {
 	}
 
 	public ArrayList<QnaDto> list(int startRow, int endRow, int pnums) {
-		String sql = "select * from(select bb.*,rownum rnum2 from (select * from(select aa.*,rownum rnum from (select level,a.* from qna a where del_yn = 'N' start with ref is null connect by prior qnum = ref ORDER SIBLINGS BY qnum desc) aa) where pnum=?) bb)where rnum2>=? and rnum2<=?";
-		//String sql = "select * from(select aa.*,rownum rnum2 from(select level,a.* from qna a where del_yn = 'N' and pnum = ? start with ref is null connect by prior qnum = ref ORDER SIBLINGS BY qnum desc) aa) where rnum2 >= ? and rnum2 <= ?";
+		String sql = "select * from qna \r\n" + 
+				"where pnum = ? and ref=1 and del_yn = 'N' \r\n" + 
+				"order by qnum desc\r\n" + 
+				"limit ?,?";
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -121,7 +119,7 @@ public class QnaDao {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, pnums);
 			pstmt.setInt(2, startRow);
-			pstmt.setInt(3, endRow);
+			pstmt.setInt(3, 5);
 			rs = pstmt.executeQuery();
 			ArrayList<QnaDto> list = new ArrayList<QnaDto>();
 			
@@ -137,10 +135,8 @@ public class QnaDao {
 				Date reg_date = rs.getDate("reg_date");
 				String del_yn = rs.getString("del_yn");
 				String locker = rs.getString("locker");
-				int level = rs.getInt("level");
-				int rnum2 = rs.getInt("rnum2");
-				QnaDto dto = new QnaDto(pnum, num, qnum, id, name, title, content, ref, reg_date, del_yn, locker,
-						level,rnum2);
+			
+				QnaDto dto = new QnaDto(pnum, num, qnum, id, name, title, content, ref, reg_date, del_yn, locker);
 				list.add(dto);
 			}
 			

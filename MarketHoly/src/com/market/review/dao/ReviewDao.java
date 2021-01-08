@@ -65,7 +65,7 @@ public class ReviewDao {
 		
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "insert into review values(?,?,?,seq_review_num.nextval,?,?,?,?,sysdate,?,?,'N')";
+			String sql = "insert into review values(?,?,?,seq_review_num.nextval,?,?,?,?,now(),?,?,'N')";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, dto.getOnum());
 			pstmt.setInt(2, dto.getPnum());
@@ -94,7 +94,7 @@ public class ReviewDao {
 		ResultSet rs=null;
 		try {
 			con=JDBCUtil.getConn();
-			String sql="select NVL(count(*),0) from review";
+			String sql="select ifnull(count(*),0) from review";
 			
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();

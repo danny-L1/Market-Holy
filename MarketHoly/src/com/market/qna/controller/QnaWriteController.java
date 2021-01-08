@@ -38,7 +38,7 @@ public class QnaWriteController extends HttpServlet {
 			ref=Integer.parseInt(req.getParameter("ref"));
 		}
 		
-		QnaDto dto = new QnaDto(pnum, num, qnum, id, name, title, content, ref, null, null, locker, -1,0);
+		QnaDto dto = new QnaDto(pnum, num, qnum, id, name, title, content, ref, null, null, locker);
 		QnaDao dao = QnaDao.getInstance();
 		int n =dao.writeQna(dto);
 		

@@ -72,7 +72,7 @@ public class SaleDao {
 						"                     rownum rnum \r\n" + 
 						"              FROM   ( \r\n" + 
 						"                            SELECT a.*, \r\n" + 
-						"                                   Nvl( \r\n" + 
+						"                                   ifnull( \r\n" + 
 						"                                        ( \r\n" + 
 						"                                        SELECT NAME \r\n" + 
 						"                                        FROM   sale \r\n" + 
@@ -89,7 +89,7 @@ public class SaleDao {
 						"       rownum rnum \r\n" + 
 						"FROM   ( \r\n" + 
 						"              SELECT a.*, \r\n" + 
-						"                     Nvl( \r\n" + 
+						"                     ifnull( \r\n" + 
 						"                          ( \r\n" + 
 						"                          SELECT NAME \r\n" + 
 						"                          FROM   sale \r\n" + 
@@ -195,7 +195,7 @@ public class SaleDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select nvl(count(*),0) cnt from product where del_yn = 'N'";
+			String sql = "select ifnull(count(*),0) cnt from product where del_yn = 'N'";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			rs.next();

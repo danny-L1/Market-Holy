@@ -78,7 +78,7 @@ public class PayDao {
 			int n = pstmt2.executeUpdate();
 			
 			for(int i=0;i<pPnum.length;i++) {
-				pstmt1 = con.prepareStatement("insert into order_product values(0,seq_orders_onum.currval,?,?,?,?)");
+				pstmt1 = con.prepareStatement("insert into order_product values(0,(select max(onum) from orders),?,?,?,?)");
 				pstmt1.setInt(1, Integer.parseInt(pPnum[i]));
 				pstmt1.setString(2, pPname[i]);
 				pstmt1.setInt(3, Integer.parseInt(pEA[i]));

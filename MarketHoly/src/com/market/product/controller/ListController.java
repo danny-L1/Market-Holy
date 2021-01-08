@@ -48,8 +48,8 @@ public class ListController extends HttpServlet {
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * 9 + 1;
-		int endRow = startRow + 8;
+		int startRow = (pageNum - 1) * 9 ;
+		int endRow = startRow + 6;
 
 		ProductDao dao = new ProductDao();
 		ArrayList<ProductDto> list = dao.getList(startRow, endRow, list_filter, cnum, type);

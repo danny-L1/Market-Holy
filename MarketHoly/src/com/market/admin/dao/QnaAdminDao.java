@@ -237,7 +237,7 @@ public class QnaAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select nvl(max(qnum),0) maxnum from qna";
+			String sql = "select ifnull(max(qnum),0) maxnum from qna";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			rs.next();
@@ -258,15 +258,15 @@ public class QnaAdminDao {
 			con = JDBCUtil.getConn();
 			String sql = "";
 			if (kind.equals("")) {
-				sql = "select nvl(count(*),0) cnt from qna";
+				sql = "select ifnull(count(*),0) cnt from qna";
 			} else if (kind.equals("pname")) {
-				sql = "SELECT Nvl(Count(*), 0) cnt \r\n" + 
+				sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
 						"FROM   qna a \r\n" + 
 						"       INNER JOIN product b \r\n" + 
 						"               ON a.pnum = b.pnum \r\n" + 
 						"WHERE  b.NAME LIKE '%" + word + "%' ";
 			} else if (kind.equals("cname")) {
-				sql = "SELECT Nvl(Count(*), 0) cnt \r\n" + 
+				sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
 						"FROM   qna a \r\n" + 
 						"       INNER JOIN product b \r\n" + 
 						"               ON a.pnum = b.pnum \r\n" + 
@@ -274,7 +274,7 @@ public class QnaAdminDao {
 						"                 FROM   category \r\n" + 
 						"                 WHERE  NAME LIKE '%" + word + "%') ";
 			} else {
-				sql = "select nvl(count(*),0) cnt from qna where name like '%" + word + "%'";
+				sql = "select ifnull(count(*),0) cnt from qna where name like '%" + word + "%'";
 			}
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -345,7 +345,7 @@ public class QnaAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT Nvl(Count(*), 0) cnt \r\n" + 
+			String sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
 					"FROM   qna a \r\n" + 
 					"WHERE  a.qnum NOT IN(SELECT ref \r\n" + 
 					"                     FROM   qna \r\n" + 
@@ -443,7 +443,7 @@ public class QnaAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT nvl(Count(*), 0) cnt \r\n" + 
+			String sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
 					"FROM  (SELECT a.*, \r\n" + 
 					"              (SELECT NAME \r\n" + 
 					"               FROM   category \r\n" + 

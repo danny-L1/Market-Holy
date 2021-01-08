@@ -28,29 +28,29 @@ public class StatDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-//			String sql = "SELECT Nvl(Sum(Decode(To_char(reg_date, 'mm'), '01', 1, \r\n" + 
+//			String sql = "SELECT ifnull(Sum(Decode(To_char(reg_date, 'mm'), '01', 1, \r\n" + 
 //					"                                               0)), 0) \"1월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '02', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '02', 1, \r\n" + 
 //					"                                               0)), 0) \"2월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '03', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '03', 1, \r\n" + 
 //					"                                               0)), 0) \"3월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '04', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '04', 1, \r\n" + 
 //					"                                               0)), 0) \"4월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '05', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '05', 1, \r\n" + 
 //					"                                               0)), 0) \"5월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '06', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '06', 1, \r\n" + 
 //					"                                               0)), 0) \"6월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '07', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '07', 1, \r\n" + 
 //					"                                               0)), 0) \"7월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '08', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '08', 1, \r\n" + 
 //					"                                               0)), 0) \"8월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '09', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '09', 1, \r\n" + 
 //					"                                               0)), 0) \"9월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '10', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '10', 1, \r\n" + 
 //					"                                               0)), 0) \"10월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '11', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '11', 1, \r\n" + 
 //					"                                               0)), 0) \"11월\", \r\n" + 
-//					"       Nvl(Sum(Decode(To_char(reg_date, 'mm'), '12', 1, \r\n" + 
+//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '12', 1, \r\n" + 
 //					"                                               0)), 0) \"12월\" \r\n" + 
 //					"FROM   (SELECT * \r\n" + 
 //					"        FROM   orders \r\n" + 

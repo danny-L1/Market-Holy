@@ -21,7 +21,7 @@ public class ProductDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select max(nvl(pnum,0)) maxnum from product";
+			String sql = "select max(ifnull(pnum,0)) maxnum from product";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
@@ -47,7 +47,7 @@ public class ProductDao {
 			con = JDBCUtil.getConn();
 
 			if (type == 0 && cnum == 0) {
-				sql = "select NVL(count(pnum),0) cnt from product where 1=1";
+				sql = "select ifnull(count(pnum),0) cnt from product where 1=1";
 				// 검색리스트일때
 				if (keyword != "") {
 					sql += " and name like ?";
@@ -56,11 +56,11 @@ public class ProductDao {
 				}
 
 			} else if (type == -1) {
-				sql = "select NVL(count(pnum),0) cnt from product where type=?";
+				sql = "select ifnull(count(pnum),0) cnt from product where type=?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, cnum);
 			} else {
-				sql = "select NVL(count(pnum),0) cnt from product where cnum=? and type=? ";
+				sql = "select ifnull(count(pnum),0) cnt from product where cnum=? and type=? ";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, cnum);
 				pstmt.setInt(2, type);
@@ -89,9 +89,9 @@ public class ProductDao {
 		String sql = null;
 		try {
 			con = JDBCUtil.getConn();
-			sql = "select NVL(count(p.pnum),0) cnt from product p";
+			sql = "select ifnull(count(p.pnum),0) cnt from product p";
 			if (filter.equals("new")) {
-				sql += " where reg_date between sysdate-7 and sysdate";
+				sql += " where reg_date between now()-7 and now()";
 
 			} else if (filter.equals("best")) {
 				sql += ",order_product op where p.pnum=op.pnum group by p.pnum";
@@ -160,9 +160,9 @@ public class ProductDao {
 		try {
 			con = JDBCUtil.getConn();
 
-			sql = "select * from (select p.*,ifnull(s.percent,1)percent \r\n" + 
+			sql = "select p.*,ifnull(s.percent,1)percent \r\n" + 
 					"from product p left outer join sale s on(p.pnum = s.pnum)\r\n" + 
-					"where 1=1"; 
+					"where 1=1 "; 
 			if (type == -1) {
 				sql += "and type=?";
 				paramList.add(cnum);
@@ -194,10 +194,10 @@ public class ProductDao {
 				break;
 			}
 
-			sql += " order by " + sort + ")p limit ?,?";
+			sql += " order by " + sort + " limit ?,?";
 
 			paramList.add(startRow);
-			paramList.add(endRow);
+			paramList.add(6);
 			pstmt = con.prepareStatement(sql);
 
 			ListIterator<Integer> iter = paramList.listIterator();
@@ -243,14 +243,13 @@ public class ProductDao {
 		try {
 			con = JDBCUtil.getConn();
 			if (filter.equals("new")) {
-				sql = "select p.*,ifnull(s.percent,1)percent \r\n" + 
-						"from product p left outer join sale s on(p.pnum = s.pnum) \r\n" + 
-						"where reg_date between now()-7 and now() and p.del_yn='N' \r\n" + 
-						"order by reg_date desc\r\n" + 
-						"limit "+startRow+","+endRow;
+				sql = "select p.*,ifnull(s.percent,1)percent  \r\n" + 
+						"from product p left outer join sale s on p.pnum = s.pnum\r\n" + 
+						"between date(now()-7) and date(now())\r\n" + 
+						"and p.del_yn='N' limit ?,?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
-				pstmt.setInt(2, endRow);
+				pstmt.setInt(2, 5);
 				rs = pstmt.executeQuery();
 
 				while (rs.next()) {
@@ -273,7 +272,7 @@ public class ProductDao {
 						"where p.pnum=op.pnum group by p.pnum,p.name,p.reg_date,p.price,p.stock,p.thumb_save,\r\n" + 
 						"p.description order by ifnull(count(op.pnum),0)desc)a, sale b \r\n" + 
 						"where a.pnum = b.pnum)aa\r\n" + 
-						"limit "+startRow+","+endRow;
+						" limit ?,?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 				pstmt.setInt(2, endRow);
@@ -297,7 +296,7 @@ public class ProductDao {
 						"p.description,s.percent \r\n" + 
 						"from product p,sale s where p.pnum=s.pnum and p.del_yn='N'\r\n" + 
 						"order by p.reg_date desc\r\n" + 
-						"limit "+startRow+","+endRow;
+						" limit ?,?";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 				pstmt.setInt(2, endRow);
@@ -320,7 +319,7 @@ public class ProductDao {
 			return list;
 
 		} catch (SQLException se) {
-			se.getStackTrace();
+			System.out.println(se.getMessage());
 			return null;
 		} finally {
 			JDBCUtil.close(rs, pstmt, con);
@@ -339,7 +338,7 @@ public class ProductDao {
 			String sql = "select p.*,ifnull(s.percent,1)percent from product p \r\n" + 
 					"left outer join sale s on(p.pnum = s.pnum)\r\n" + 
 					"where p.name like ? and p.del_yn='N'\r\n" + 
-					"limit "+startRow+","+endRow;
+					"limit ?,?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, "%" + keyword + "%");
 			pstmt.setInt(2, startRow);

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.market.page.util.PageUtil;
 import com.market.product.dao.ProductDao;
 import com.market.product.dto.ProductDto;
 import com.market.qna.dao.QnaDao;
@@ -27,32 +28,30 @@ public class QnaListController extends HttpServlet {
 			pnum=Integer.parseInt(req.getParameter("pnum"));
 		}
 		
-		
+	
 		
 		String spageNum=req.getParameter("pageNum");
 		int pageNum=1;
 		if(spageNum!=null) {
 			pageNum=Integer.parseInt(spageNum);
 		}
-		int startRow=(pageNum-1)*5+1;
+		
+
+		QnaDao dao = QnaDao.getInstance();
+		int totalRowCount=dao.getCount(pnum);
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 4, 5);
+		int startRow=pu.getStartRow()-1;
 		int endRow=startRow+4;
+		ArrayList<QnaDto> list=dao.list(startRow, endRow, pnum);
 	
 		
-		QnaDao dao = QnaDao.getInstance();
 		
 		//페이지에 해당하는 글목록 가져오기
 
 		
-		ArrayList<QnaDto> list=dao.list(startRow, endRow, pnum);
-		//System.out.println(list);
-
-		//전체 페이지갯수 구하기
-		int count= dao.getCount(pnum);
-		
-		int pageCount=(int)Math.ceil(dao.getCount(pnum)/5.0);
-		
-		int startPageNum=((pageNum-1)/4)*4+1;
-		int endPageNum=startPageNum+3;
+		int pageCount=pu.getTotalPageCount();
+		int startPageNum=pu.getStartPageNum();
+		int endPageNum=pu.getEndPageNum();
 		if(pageCount<endPageNum) {
 			endPageNum=pageCount;
 		}
@@ -64,7 +63,7 @@ public class QnaListController extends HttpServlet {
 		ProductDao pdao=new ProductDao();
 		ProductDto dto=pdao.getDetail(pnum);
 
-		req.setAttribute("count", count);
+		req.setAttribute("count", totalRowCount);
 		req.setAttribute("pnum", pnum);
 		req.setAttribute("dto",dto);
 		req.setAttribute("id",id);

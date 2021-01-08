@@ -3,6 +3,7 @@ package com.market.qna.dto;
 import java.sql.Date;
 
 public class QnaDto {
+
 	private int pnum;
 	private int num;
 	private int qnum;
@@ -14,15 +15,11 @@ public class QnaDto {
 	private Date reg_date;
 	private String del_yn;
 	private String locker;
-	private int level;
-	private int rnum2;
 	
 	public QnaDto() {}
-
-
-
+	
 	public QnaDto(int pnum, int num, int qnum, String id, String name, String title, String content, int ref,
-			Date reg_date, String del_yn, String locker, int level, int rnum2) {
+			Date reg_date, String del_yn, String locker) {
 		super();
 		this.pnum = pnum;
 		this.num = num;
@@ -35,18 +32,6 @@ public class QnaDto {
 		this.reg_date = reg_date;
 		this.del_yn = del_yn;
 		this.locker = locker;
-		this.level = level;
-		this.rnum2= rnum2;
-	}
-
-
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	public int getPnum() {
@@ -137,22 +122,6 @@ public class QnaDto {
 		this.locker = locker;
 	}
 
-
-
-	public int getRnum2() {
-		return rnum2;
-	}
-
-
-
-	public void setRnum2(int rnum2) {
-		this.rnum2 = rnum2;
-	}
-
-
-
-
 	
-	
-	
+
 }
