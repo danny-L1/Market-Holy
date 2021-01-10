@@ -19,25 +19,7 @@ public class NBSController extends HttpServlet{
 		//1.최근 일주일 등록 상품
 		//2.인기상품
 		//3.세일상품
-		String filter=req.getParameter("filter");
-		
-//		String spageNum = req.getParameter("pageNum");
-//		int pageNum = 1;
-//		if (spageNum != null) {
-//			pageNum = Integer.parseInt(spageNum);
-//		}
-//		int startRow = (pageNum - 1) * 9 ;
-//		int endRow = startRow + 5;
-//
-//		ProductDao dao = new ProductDao();
-//		ArrayList<ProductDto> list = dao.getNBSList(startRow, endRow,filter);
-//		int pageCount = (int) Math.ceil(dao.getNBSCount(filter) / 9.0);
-//		int startPageNum = ((pageNum - 1) / 5) * 5 + 1;
-//		int endPageNum = startPageNum + 4;
-//		if (pageCount < endPageNum) {
-//			endPageNum = pageCount;
-//		}
-//		
+		String filter=req.getParameter("filter");		
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {

@@ -66,41 +66,15 @@ public class SaleDao {
 			con = JDBCUtil.getConn();
 			String sql = "";
 			if (pType == -1) {
-				sql = "SELECT * \r\n" + 
-						"FROM   ( \r\n" + 
-						"              SELECT aa.*, \r\n" + 
-						"                     rownum rnum \r\n" + 
-						"              FROM   ( \r\n" + 
-						"                            SELECT a.*, \r\n" + 
-						"                                   ifnull( \r\n" + 
-						"                                        ( \r\n" + 
-						"                                        SELECT NAME \r\n" + 
-						"                                        FROM   sale \r\n" + 
-						"                                        WHERE  pnum=a.pnum \r\n" + 
-						"                                        AND    del_yn='N'),-1) onsalename \r\n" + 
-						"                            FROM   product a \r\n" + 
-						"                            WHERE  a.type = " + pCnum + " \r\n" + 
-						"                            AND    del_yn = 'N') aa) \r\n" + 
-						"WHERE  rnum >= ? \r\n" + 
-						"AND    rnum <= ?";
+				sql = "SELECT p.*, ifnull(( SELECT NAME  FROM   sale    \r\n" + 
+						"WHERE  pnum=p.pnum AND    del_yn='N'),-1)onsalename \r\n" + 
+						"FROM   product p WHERE  p.type = "+ pCnum + " and del_yn = 'N'\r\n" + 
+						"limit ?,?";
 			} else {
-				sql = "SELECT * \r\n" + 
-						"FROM (SELECT aa.*, \r\n" + 
-						"       rownum rnum \r\n" + 
-						"FROM   ( \r\n" + 
-						"              SELECT a.*, \r\n" + 
-						"                     ifnull( \r\n" + 
-						"                          ( \r\n" + 
-						"                          SELECT NAME \r\n" + 
-						"                          FROM   sale \r\n" + 
-						"                          WHERE  pnum=a.pnum \r\n" + 
-						"                          AND    del_yn='N'),-1) onsalename \r\n" + 
-						"              FROM   product a \r\n" + 
-						"              WHERE  a.cnum = " + pCnum + " \r\n" + 
-						"              AND    type = " + pType + " \r\n" + 
-						"              AND    del_yn = 'N') aa) WHERE rnum >= ? \r\n" + 
-						"AND \r\n" + 
-						"rnum <= ?";
+				sql = "SELECT p.*, ifnull(( SELECT NAME  FROM   sale    \r\n" + 
+						"WHERE  pnum=p.pnum AND    del_yn='N'),-1)onsalename \r\n" + 
+						"FROM   product p WHERE p.cnum = "+ pCnum +" and type = "+ pType +" and del_yn = 'N'"+
+						"limit ?,?";
 			}
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, startRow);
