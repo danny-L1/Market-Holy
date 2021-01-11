@@ -245,7 +245,9 @@ public class ProductDao {
 				sql = "select p.*,ifnull(s.percent,1)percent  \r\n" + 
 						"from product p left outer join sale s on p.pnum = s.pnum\r\n" + 
 						"between date(now()-7) and date(now())\r\n" + 
-						"and p.del_yn='N' limit ?,6";
+						"and p.del_yn='N' "+
+						" order by reg_date desc "+
+						"limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 				rs = pstmt.executeQuery();
