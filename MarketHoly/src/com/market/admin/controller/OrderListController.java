@@ -15,20 +15,12 @@ import org.json.JSONObject;
 
 import com.market.admin.dao.OrderAdminDao;
 import com.market.admin.dto.OrderAdminDto;
+import com.market.page.util.PageUtil;
 
 @WebServlet("/admin/orderList.do")
 public class OrderListController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		final int PAGE_CNT = 10; // 글 목록 개수
-		final double PAGE_BLOCK = 10.0; // 페이지 블록
-		String spageNum = req.getParameter("pageNum");
-		int pageNum = 1;
-		if (spageNum != null) {
-			pageNum = Integer.parseInt(spageNum);
-		}
-		int startRow = (pageNum - 1) * PAGE_CNT + 1;
-		int endRow = (startRow + PAGE_CNT) - 1;
 		
 
 		String kind = req.getParameter("kind");
@@ -45,17 +37,21 @@ public class OrderListController extends HttpServlet {
 		}else {
 			status = "5,6";
 		}
-
-		OrderAdminDao ordDao = OrderAdminDao.getInstance();
-
-		ArrayList<OrderAdminDto> ordList = ordDao.selOrdList(startRow, endRow, kind, word, status);
-		int pageCount = (int) Math.ceil(ordDao.selOrdCnt(startRow, endRow, kind, word, status) / PAGE_BLOCK);
-		int startPageNum = (int) (Math.floor((pageNum - 1) / PAGE_BLOCK) * PAGE_BLOCK + 1);
-		int endPageNum = (int) (startPageNum + (PAGE_BLOCK - 1));
-		if (pageCount < endPageNum) {
-			endPageNum = pageCount;
+		String spageNum = req.getParameter("pageNum");
+		int pageNum = 1;
+		if (spageNum != null) {
+			pageNum = Integer.parseInt(spageNum);
 		}
-
+	
+		OrderAdminDao ordDao = OrderAdminDao.getInstance();
+		int totalRowCount=ordDao.selOrdCnt(kind, word, status) ;
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int startRow=pu.getStartRow()-1;
+		ArrayList<OrderAdminDto> ordList = ordDao.selOrdList(startRow, kind, word, status);
+		int pageCount = pu.getTotalPageCount();
+		int startPageNum = pu.getStartPageNum();
+		int endPageNum = pu.getEndPageNum();
+		
 		JSONArray jsonArr = new JSONArray();
 		JSONArray jarr = new JSONArray();
 		for (OrderAdminDto dto : ordList) {

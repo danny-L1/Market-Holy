@@ -22,7 +22,7 @@ public class OrderAdminDao {
 
 	}
 
-	public ArrayList<OrderAdminDto> selOrdList(int startRow, int endRow, String kind, String word, String pStatus) {
+	public ArrayList<OrderAdminDto> selOrdList(int startRow, String kind, String word, String pStatus) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -31,62 +31,35 @@ public class OrderAdminDao {
 			con = JDBCUtil.getConn();
 			String sql = "";
 			if(kind.equals("pname")) {
-				sql = "SELECT * \r\n" + 
-						"FROM   (SELECT aa.*, \r\n" + 
-						"               rownum rnum \r\n" + 
-						"        FROM   (SELECT a.*, \r\n" + 
-						"                       (SELECT NAME \r\n" + 
-						"                        FROM   common \r\n" + 
-						"                        WHERE  type = '주문상태' \r\n" + 
-						"                               AND val = status)  statusName, \r\n" + 
-						"                       (SELECT NAME \r\n" + 
-						"                        FROM   common \r\n" + 
-						"                        WHERE  type = '결제 방법' \r\n" + 
-						"                               AND val = pay_way) pay_wayName, \r\n" + 
-						"                       (SELECT pname \r\n" + 
-						"                               || Decode(bb.cnt, 1, '', \r\n" + 
-						"                                                 ' 외 ' \r\n" + 
-						"                                                 || bb.cnt \r\n" + 
-						"                                                 || '건') prodName \r\n" + 
-						"                        FROM   order_product aa, \r\n" + 
-						"                               (SELECT onum, \r\n" + 
-						"                                       Count(*) cnt \r\n" + 
-						"                                FROM   order_product \r\n" + 
-						"                                GROUP  BY onum) bb \r\n" + 
-						"                        WHERE  aa.onum = a.onum \r\n" + 
-						"                               AND aa.onum = bb.onum \r\n" + 
-						"                               AND rownum = 1)    prodName, (select rating from member where num = a.num and del_yn='N') rating \r\n" +
-						"                FROM   orders a \r\n" + 
-						"                WHERE  status IN( " + pStatus +" ) \r\n" + 
-						"                       AND onum LIKE '%" + word + "%' \r\n" + 
-						"                ORDER  BY reg_date DESC) aa) \r\n" + 
-						"WHERE  rnum >= ? \r\n" + 
-						"       AND rnum <= ? ";
+				sql = "SELECT a.*,\r\n" + 
+						"(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n" + 
+						"(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n" + 
+						"(SELECT pname || case bb.cnt when 1 then ' 외 ' || bb.cnt || '건' end as prodName\r\n" + 
+						"FROM   order_product aa, \r\n" + 
+						"(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n" + 
+						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 0) prodName,\r\n" + 
+						"(select rating from member where num = a.num and del_yn='N') rating \r\n" + 
+						"FROM   orders a \r\n" + 
+						"WHERE status IN( " + pStatus + " ) " + 
+						"ORDER  BY reg_date DESC limit ?,6";
+				
 			}else {
-				sql = "SELECT * \r\n" + 
-						"FROM   (SELECT aa.*, \r\n" + 
-						"               rownum rnum \r\n" + 
-						"        FROM   (SELECT a.*, \r\n" + 
-						"                       (SELECT NAME \r\n" + 
-						"                        FROM   common \r\n" + 
-						"                        WHERE  type = '주문상태' \r\n" + 
-						"                               AND val = status)  statusName, \r\n" + 
-						"                       (SELECT NAME \r\n" + 
-						"                        FROM   common \r\n" + 
-						"                        WHERE  type = '결제 방법' \r\n" + 
-						"                               AND val = pay_way) pay_wayName, \r\n" + 
-						"  (SELECT pname || Decode(bb.cnt, 1, '', ' 외 ' || bb.cnt || '건') prodName  FROM   order_product aa,  (SELECT onum, Count(*) cnt  FROM   order_product  GROUP  BY onum) bb  WHERE  aa.onum = a.onum  AND aa.onum = bb.onum AND rownum = 1)    prodName,(select rating from member where num = a.num and del_yn='N') rating" +  
-						"                FROM   orders a \r\n" + 
-						"                WHERE  status IN( " + pStatus + " ) \r\n" + 
-						"                       AND " + kind + " LIKE '%" + word +"%' \r\n" + 
-						"                ORDER  BY reg_date DESC) aa) \r\n" + 
-						"WHERE  rnum >= ? \r\n" + 
-						"       AND rnum <= ? ";
+				sql = "SELECT a.*,\r\n" + 
+						"(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n" + 
+						"(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n" + 
+						"(SELECT pname || case bb.cnt when 1 then ' 외 ' || bb.cnt || '건' end as prodName\r\n" + 
+						"FROM   order_product aa, \r\n" + 
+						"(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n" + 
+						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 0) prodName,\r\n" + 
+						"(select rating from member where num = a.num and del_yn='N') rating \r\n" + 
+						"FROM   orders a \r\n" + 
+						"WHERE status IN( " + pStatus + " ) " + 
+						"ORDER  BY reg_date DESC limit ?,6;";
 			}
-
+				
 			pstmt = con.prepareStatement(sql);
+			//pstmt.setString(1, "% " + word + " %");
 			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				int onum = rs.getInt("onum");
@@ -114,7 +87,7 @@ public class OrderAdminDao {
 		}
 	}
 
-	public int selOrdCnt(int startRow, int endRow, String kind, String word, String status) {
+	public int selOrdCnt(String kind, String word, String status) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
