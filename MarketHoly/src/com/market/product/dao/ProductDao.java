@@ -265,14 +265,16 @@ public class ProductDao {
 							new ProductDto(pnum, name, reg_date, price, stock, thumb_save, description, percent));
 				}
 			}else if(filter.equals("best")) {
-				sql = "select * from(select a.*,b.percent \r\n" + 
-						"from(select p.pnum,p.name pname,p.reg_date,p.price,p.stock,p.thumb_save,p.description,\r\n" + 
-						"ifnull(count(op.pnum),0)cnt  \r\n" + 
-						"from order_product op,product p \r\n" + 
-						"where p.pnum=op.pnum group by p.pnum,p.name,p.reg_date,p.price,p.stock,p.thumb_save,\r\n" + 
-						"p.description order by ifnull(count(op.pnum),0)desc)a, sale b \r\n" + 
-						"where a.pnum = b.pnum)aa\r\n" + 
-						" limit ?,6";
+				sql = "select aa.*,ifnull(s.percent,1)percent\n" + 
+						"from\n" + 
+						"(select b.pnum, name pname ,b.reg_date,b.price,b.stock,b.thumb_save,b.description,b.del_yn, ifnull(count(a.pnum),0)cnt\n" + 
+						"from order_product as a\n" + 
+						"inner join product as b\n" + 
+						"on a.pnum = b.pnum\n" + 
+						"where del_yn='N'\n" + 
+						"group by a.pnum\n" + 
+						"order by cnt desc)aa, sale s group by aa.pnum "+
+						"limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
 
