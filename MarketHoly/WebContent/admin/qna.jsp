@@ -50,7 +50,6 @@ nav {
 				<thead>
 					<tr>
 						<th style="width: 5%">번호</th>
-						<th style="width: 13%">카테고리</th>
 						<th style="width: 27%">상품명</th>
 						<th style="width: 34%">제목</th>
 						<th style="width: 8%">작성자</th>

@@ -3,10 +3,11 @@
 <%@page import="com.market.product.dao.ProductDao"%>
 <%@page import="com.market.product.dto.ProductDto"%>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <style>
-
 .info {
 	float: left;
 	width: 50%;
@@ -51,7 +52,8 @@ h1, h2, h3 {
 	border: 1px solid lightgray;
 	border-radius: 6px 6px 0 0;
 }
-.nav>li>a:focus,.nav>li>a:hover{
+
+.nav>li>a:focus, .nav>li>a:hover {
 	background-color: lightgray;
 	text-decoration: none;
 }
@@ -59,7 +61,8 @@ h1, h2, h3 {
 
 <div id="imgwrap">
 	<div class="info" id="img">
-		<img src="${pageContext.request.contextPath }/img/${dto.thumb_save}" id="img" >
+		<img src="${pageContext.request.contextPath }/img/${dto.thumb_save}"
+			id="img">
 	</div>
 </div>
 <div class="info">
@@ -67,16 +70,33 @@ h1, h2, h3 {
 		<div class="row">
 			<div class="well col-md-8 form-inline form-group">
 				<div class="form-group">
-					<span>관리자 메뉴</span>
-					<input type="button" class="btn btn-default" value="상품 수정" id="btnModify" data-toggle='modal' data-target='#prodModify'>
-					<input type="button" class="btn btn-default" value="상품 삭제" id="btnDelete">
+					<span>관리자 메뉴</span> <input type="button" class="btn btn-default"
+						value="상품 수정" id="btnModify" data-toggle='modal'
+						data-target='#prodModify'> <input type="button"
+						class="btn btn-default" value="상품 삭제" id="btnDelete">
 				</div>
 			</div>
 		</div>
 	</c:if>
 	<h1>${dto.name}</h1>
 	<h4 class='text-muted'>${dto.description}</h4>
-	<h1>${dto.price}</h1>
+	<h1>
+		<c:set var="sprice" value="${dto.price*(1-dto.percent) }" />
+		<b> <c:choose>
+				<c:when test="${dto.percent==1}">
+					<fmt:formatNumber value="${dto.price}" type="number" />
+				</c:when>
+				<c:otherwise>
+					<span class="orp"><del>${dto.price}원</del></span>
+					<span class="emph">→</span>
+					<span><fmt:formatNumber value="${sprice+(1-(sprice%1))%1 }"
+							type="number" /></span>
+				</c:otherwise>
+			</c:choose>
+			
+		</b>
+
+	</h1>
 	원
 	<hr style="border: solid 1px RebeccaPurple;">
 	<h4>
@@ -89,8 +109,7 @@ h1, h2, h3 {
 			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		</button>
 	</h4>
-	<br>
-	<input type="hidden" id="price" value="${dto.price }">
+	<br> <input type="hidden" id="price" value="${dto.price }">
 	<input type="hidden" id="stock" value="${dto.stock }">
 	<p class='text-muted' style="font-size: 0.9em;">
 		<!-- 판매단위 1팩
@@ -105,18 +124,9 @@ h1, h2, h3 {
 		<br>
 		안내사항 -상품특성상 3%내외의 중량차이가 발생할 수 있습니다.
 		<br> -->
-		판매단위 ${prodInfo.unit }
-		<br>
-		중량 용량 ${prodInfo.volume }
-		<br>
-		원산지 ${prodInfo.origin }
-		<br>
-		포장타입 ${prodInfo.pack_type }
-		<br>
-		유통기한 ${prodInfo.shelf_life }
-		<br>
-		안내사항 ${prodInfo.guidance }
-		<br>
+		판매단위 ${prodInfo.unit } <br> 중량 용량 ${prodInfo.volume } <br>
+		원산지 ${prodInfo.origin } <br> 포장타입 ${prodInfo.pack_type } <br>
+		유통기한 ${prodInfo.shelf_life } <br> 안내사항 ${prodInfo.guidance } <br>
 	</p>
 	<hr style="border: solid 1px RebeccaPurple;">
 	<div id="t">
@@ -124,24 +134,22 @@ h1, h2, h3 {
 		<h1>
 			<label id="sum">${dto.price }</label>
 		</h1>
-		원
-		<br>
+		원 <br>
 
-		<button type="button" class="btn-lg pull-right" id="incart" style="background-color: RebeccaPurple; color: white" onclick="incart()">장바구니 담기</button>
+		<button type="button" class="btn-lg pull-right" id="incart"
+			style="background-color: RebeccaPurple; color: white"
+			onclick="incart()">장바구니 담기</button>
 	</div>
 
 </div>
 
 
 <ul id="myTab" class="nav nav-tabs" role="tablist">
-	<li>
-		<a href="#discript" data-toggle="tab" tabindex="1" id="discript">상품설명</a>
+	<li><a href="#discript" data-toggle="tab" tabindex="1"
+		id="discript">상품설명</a></li>
+	<li><a href="#review" data-toggle="tab" tabindex="2" id="review">상품후기</a>
 	</li>
-	<li>
-		<a href="#review" data-toggle="tab" tabindex="2" id="review">상품후기</a>
-	</li>
-	<li>
-		<a href="#qna" data-toggle="tab" tabindex="3" id="qna">상품문의</a>
+	<li><a href="#qna" data-toggle="tab" tabindex="3" id="qna">상품문의</a>
 	</li>
 </ul>
 <br>
@@ -149,7 +157,8 @@ h1, h2, h3 {
 <div id="myTabContent" class="tab-content">
 	<!-- 상품상세탭 -->
 	<div class="tab-pane_1 active in">
-		<img src="${pageContext.request.contextPath}/img/${dto.detail_save}" id="discript_img">
+		<img src="${pageContext.request.contextPath}/img/${dto.detail_save}"
+			id="discript_img">
 	</div>
 
 
@@ -171,7 +180,8 @@ h1, h2, h3 {
 	</c:choose>
 </section>
 
-<div class="modal fade" id="prodModify" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="prodModify" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -180,59 +190,76 @@ h1, h2, h3 {
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-md-5 form-group">
-						<label class="label label-success">상품명</label>
-						<input id="txtName" type="text" class="form-control" value="${dto.name }" placeholder="상품명을 입력하세요" maxlength="30">
+						<label class="label label-success">상품명</label> <input id="txtName"
+							type="text" class="form-control" value="${dto.name }"
+							placeholder="상품명을 입력하세요" maxlength="30">
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-12 form-group">
 						<label class="label label-success">상품 설명</label>
-						<textarea id="txtDesc" class="form-control" rows="3" cols="50" style="resize: none;">${dto.description }</textarea>
+						<textarea id="txtDesc" class="form-control" rows="3" cols="50"
+							style="resize: none;">${dto.description }</textarea>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 form-group">
-						<label class="label label-success">가격</label>
-						<input id="txtPrice" type="text" class="form-control" value="${dto.price }" placeholder="가격을 입력하세요" maxlength="30">
+						<label class="label label-success">가격</label> <input id="txtPrice"
+							type="text" class="form-control" value="${dto.price }"
+							placeholder="가격을 입력하세요" maxlength="30">
 					</div>
 					<div class="col-md-6 form-group">
-						<label class="label label-success">재고</label>
-						<input id="txtStock" type="text" class="form-control" value="${dto.stock }" placeholder="가격을 입력하세요" maxlength="30">
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-6 form-group">
-						<label class="label label-success">판매 단위</label>
-						<input id="txtUnit" type="text" class="form-control" value="${prodInfo.unit }" placeholder="판매 단위를 입력하세요" maxlength="30">
-					</div>
-					<div class="col-md-6 form-group">
-						<label class="label label-success">용량</label>
-						<input id="txtVolume" type="text" class="form-control" value="${prodInfo.volume }" placeholder="용량을 입력하세요" maxlength="30">
+						<label class="label label-success">재고</label> <input id="txtStock"
+							type="text" class="form-control" value="${dto.stock }"
+							placeholder="가격을 입력하세요" maxlength="30">
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 form-group">
-						<label class="label label-success">원산지</label>
-						<input id="txtOrigin" type="text" class="form-control" value="${prodInfo.origin }" placeholder="원산지를 입력하세요" maxlength="30">
+						<label class="label label-success">판매 단위</label> <input
+							id="txtUnit" type="text" class="form-control"
+							value="${prodInfo.unit }" placeholder="판매 단위를 입력하세요"
+							maxlength="30">
 					</div>
 					<div class="col-md-6 form-group">
-						<label class="label label-success">포장 종류</label>
-						<input id="txtPackType" type="text" class="form-control" value="${prodInfo.pack_type }" placeholder="포장 종류를 입력하세요" maxlength="30">
+						<label class="label label-success">용량</label> <input
+							id="txtVolume" type="text" class="form-control"
+							value="${prodInfo.volume }" placeholder="용량을 입력하세요"
+							maxlength="30">
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 form-group">
-						<label class="label label-success">유통 기한</label>
-						<input id="txtShelfLife" type="text" class="form-control" value="${prodInfo.shelf_life }" placeholder="유통 기한을 입력하세요" maxlength="30">
+						<label class="label label-success">원산지</label> <input
+							id="txtOrigin" type="text" class="form-control"
+							value="${prodInfo.origin }" placeholder="원산지를 입력하세요"
+							maxlength="30">
 					</div>
 					<div class="col-md-6 form-group">
-						<label class="label label-success">안내사항</label>
-						<input id="txtGuidance" type="text" class="form-control" value="${prodInfo.guidance }" placeholder="안내사항을 입력하세요" maxlength="30">
+						<label class="label label-success">포장 종류</label> <input
+							id="txtPackType" type="text" class="form-control"
+							value="${prodInfo.pack_type }" placeholder="포장 종류를 입력하세요"
+							maxlength="30">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 form-group">
+						<label class="label label-success">유통 기한</label> <input
+							id="txtShelfLife" type="text" class="form-control"
+							value="${prodInfo.shelf_life }" placeholder="유통 기한을 입력하세요"
+							maxlength="30">
+					</div>
+					<div class="col-md-6 form-group">
+						<label class="label label-success">안내사항</label> <input
+							id="txtGuidance" type="text" class="form-control"
+							value="${prodInfo.guidance }" placeholder="안내사항을 입력하세요"
+							maxlength="30">
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" id="btnModifyOk">상품 수정</button>
+				<button type="button" class="btn btn-primary" id="btnModifyOk">상품
+					수정</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
 			</div>
 		</div>

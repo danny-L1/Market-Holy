@@ -45,7 +45,6 @@ public class QnaUnanswerListController extends HttpServlet {
 		for (QnaAdminDto dto : qnaList) {
 			JSONObject json = new JSONObject();
 			json.put("qnum", dto.getQnum());
-			json.put("cname", dto.getCname());
 			json.put("pname", dto.getPname());
 			json.put("title", dto.getTitle());
 			json.put("writer", dto.getName());

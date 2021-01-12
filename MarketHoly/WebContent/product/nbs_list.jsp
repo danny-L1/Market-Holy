@@ -69,9 +69,9 @@ a:visited {
 										<fmt:formatNumber value="${pro.price}" type="number"/>
 									</c:when>
 									<c:otherwise>
-									<span class="orp"><del>${pro.price}원</del></span>
-									<span class="emph">→</span>
-									<span><fmt:formatNumber value="${sprice+(1-(sprice%1))%1 }" type="number"/></span>
+										<span class="orp"><del>${pro.price}원</del></span>
+										<span class="emph">→</span>
+										<span><fmt:formatNumber value="${sprice+(1-(sprice%1))%1 }" type="number"/></span>
 									</c:otherwise>
 								</c:choose> 원
 							</b>

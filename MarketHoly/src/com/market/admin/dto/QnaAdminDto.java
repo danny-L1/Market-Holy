@@ -4,7 +4,6 @@ import java.sql.Date;
 
 public class QnaAdminDto {
 	private int qnum;
-	private String cname;
 	private String pname;
 	private String title;
 	private String name;
@@ -12,10 +11,11 @@ public class QnaAdminDto {
 	private String content;
 	private int pnum;
 	private int level;
-	public QnaAdminDto(int qnum, String cname, String pname, String title, String name, Date reg_date, String content,
-			int pnum, int level) {
+	
+	public QnaAdminDto(int qnum, String pname, String title, String name, Date reg_date, String content, int pnum,
+			int level) {
+		super();
 		this.qnum = qnum;
-		this.cname = cname;
 		this.pname = pname;
 		this.title = title;
 		this.name = name;
@@ -29,12 +29,6 @@ public class QnaAdminDto {
 	}
 	public void setQnum(int qnum) {
 		this.qnum = qnum;
-	}
-	public String getCname() {
-		return cname;
-	}
-	public void setCname(String cname) {
-		this.cname = cname;
 	}
 	public String getPname() {
 		return pname;
@@ -78,5 +72,6 @@ public class QnaAdminDto {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+
 
 }

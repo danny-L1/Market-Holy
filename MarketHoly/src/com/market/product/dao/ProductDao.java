@@ -122,7 +122,10 @@ public class ProductDao {
 		ProductDto dto = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select * from product where pnum=?";
+			String sql = " select *, ifnull(s.percent,1)percent \n" + 
+					"from product p\n" + 
+					"left outer join sale s on(p.pnum = s.pnum)\n" + 
+					"where p.pnum=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, pnum);
 			rs = pstmt.executeQuery();
@@ -137,8 +140,9 @@ public class ProductDao {
 				String detail_save = rs.getString("detail_save");
 				String description = rs.getString("description");
 				String del_yn = rs.getString("del_yn");
+				float percent = rs.getFloat("percent");
 				dto = new ProductDto(pnum, 0, name, reg_date, price, stock, 0, thumb_org, thumb_save, description,
-						detail_org, detail_save, del_yn);
+						detail_org, detail_save, del_yn, percent);
 			}
 			return dto;
 
@@ -289,7 +293,7 @@ public class ProductDao {
 					int stock = rs.getInt("stock");
 					String thumb_save = rs.getString("thumb_save");
 					String description = rs.getString("description");
-					int percent=rs.getInt("percent");
+					float percent=rs.getInt("percent");
 					list.add(
 							new ProductDto(pnum, name, reg_date, price, stock, thumb_save, description, percent));
 				}
@@ -376,9 +380,15 @@ public class ProductDao {
 		PreparedStatement pstmt3 = null;
 		PreparedStatement pstmt4 = null;
 		PreparedStatement pstmt5 = null;
+		PreparedStatement pstmt6 = null;
 		try {
 			con = JDBCUtil.getConn();
 			con.setAutoCommit(false);
+		
+			String sql6 = "delete from review where pnum = ?";
+			pstmt6 = con.prepareStatement(sql6);
+			pstmt6.setInt(1, pnum);
+			pstmt6.executeUpdate();
 			
 			String sql5 = "delete from prod_info where pnum = ?";
 			pstmt5 = con.prepareStatement(sql5);

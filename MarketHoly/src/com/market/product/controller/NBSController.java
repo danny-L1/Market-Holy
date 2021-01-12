@@ -30,7 +30,7 @@ public class NBSController extends HttpServlet{
 		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
 		int startRow = pu.getStartRow()-1;
 		ArrayList<ProductDto> list = dao.getNBSList(startRow, filter);
-	
+		
 
 		
 		req.setAttribute("filter", filter);
