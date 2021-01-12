@@ -16,34 +16,31 @@ import org.json.JSONObject;
 
 import com.market.member.dao.MemberDao;
 import com.market.member.dto.MemberDto;
+import com.market.page.util.PageUtil;
 import com.market.qna.dao.QnaDao;
 
 @WebServlet("/admin/memList.do")
 public class MemListController extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		final int PAGE_CNT = 10; // 글 목록 개수
-		final double PAGE_BLOCK = 10.0; // 페이지 블록
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * PAGE_CNT + 1;
-		int endRow = (startRow + PAGE_CNT) - 1;
-		
 		
 		String word = req.getParameter("word");
 		String type = req.getParameter("type");
+		
 		MemberDao dao = MemberDao.getInstance();
-		ArrayList<MemberDto> memList = dao.selSearchList(startRow, endRow, word, type);
-
-		int pageCount = (int) Math.ceil(dao.selMemCount() / PAGE_BLOCK);
-		int startPageNum = (int) (Math.floor((pageNum - 1) / PAGE_BLOCK) * PAGE_BLOCK + 1);
-		int endPageNum = (int) (startPageNum + (PAGE_BLOCK - 1));
-		if (pageCount < endPageNum) {
-			endPageNum = pageCount;
-		}
+		int totalRowCount = dao.selMemCount();
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int pageCount = pu.getTotalPageCount();
+		int startRow=pu.getStartRow()-1;
+		int startPageNum = pu.getStartPageNum();
+		int endPageNum = pu.getEndPageNum();
+		ArrayList<MemberDto> memList = dao.selSearchList(startRow, word, type);
+		
 		
 		JSONArray jsonArr = new JSONArray();
 		JSONArray jarr = new JSONArray();

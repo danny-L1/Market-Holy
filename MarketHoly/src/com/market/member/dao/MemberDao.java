@@ -432,7 +432,7 @@ public class MemberDao {
 		}
 	}
 
-	public ArrayList<MemberDto> selSearchList(int startRow, int endRow, String word, String type) {
+	public ArrayList<MemberDto> selSearchList(int startRow, String word, String type) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -441,11 +441,11 @@ public class MemberDao {
 			con = JDBCUtil.getConn();
 			String sql = "";
 			if (word.equals("")) {
-				sql = "select * from member order by num desc limit"
-						+ startRow + "," + endRow;
+				sql = "select * from member order by num desc limit "
+						+ startRow + ", 6";
 			} else {
-				sql = "select * from member where type like CONCAT('%',"+ type +",'%') order by num desc\r\n" + 
-						"limit" + startRow + "," + endRow;
+				sql = "select * from member where "+ type +" like CONCAT('%','"+ word +"','%') order by num desc\r\n" + 
+						"limit " + startRow + ",6";
 			}
 
 			pstmt = con.prepareStatement(sql);
