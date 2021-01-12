@@ -22,7 +22,7 @@ public class QnaAdminDao {
 
 	}
 
-	public ArrayList<QnaAdminDto> selQnaList(int startRow, int endRow, String kind, String word) {
+	public ArrayList<QnaAdminDto> selQnaList(int startRow, String kind, String word) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -31,22 +31,22 @@ public class QnaAdminDao {
 			String sql = "";
 
 			if (kind.equals("writer")) {
-				sql = " select * from qna a \n" + 
+				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  and ref=1 AND a.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  and isnull(ref) AND a.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc \n" +
 						" limit ?,?";
 				
 			} else if (kind.equals("pname")) {
-				sql = " select * from qna a \n" + 
+				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  and ref=1 AND b.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  and isnull(ref) AND b.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc \n" +
 						" limit ?,?";
 			} else {
-				sql = " select * from qna a \n" + 
+				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  and ref=1 and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  and isnull(ref) and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc "
 						+ " limit ?,?";
 			}
@@ -63,8 +63,7 @@ public class QnaAdminDao {
 				Date reg_date = rs.getDate("reg_date");
 				String content = rs.getString("content");
 				int pnum = rs.getInt("pnum");
-				int level = rs.getInt("level");
-				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum, level));
+				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum));
 			}
 			return list;
 		} catch (SQLException e) {
@@ -190,7 +189,7 @@ public class QnaAdminDao {
 				Date reg_date = rs.getDate("reg_date");
 				String content = rs.getString("content");
 				int pnum = rs.getInt("pnum");
-				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum, -1));
+				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum));
 			}
 			return list;
 		} catch (SQLException e) {
@@ -287,7 +286,7 @@ public class QnaAdminDao {
 				String content = rs.getString("content");
 				int pnum = rs.getInt("pnum");
 				int level = rs.getInt("level");
-				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum, level));
+				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum));
 			}
 			return list;
 		} catch (SQLException e) {

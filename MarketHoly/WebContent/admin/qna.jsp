@@ -264,7 +264,6 @@ nav {
 				row += "<tr data-toggle='modal' data-target='#qnaAnswer' style='cursor:pointer;'>";
 			}
 			row += "<td>"+dto.qnum+"</td>";
-			row += "<td>"+dto.cname+"</td>";
 			row += "<td>"+dto.pname+"</td>";
 			row += "<td class='align-left'>"+replyIcon+dto.title+"</td>";
 			row += "<td>"+dto.writer+"</td>";
