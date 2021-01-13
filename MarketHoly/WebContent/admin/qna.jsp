@@ -399,7 +399,7 @@ nav {
 				$("#btnWrite").prop("disabled", false);
 				$("#btnModify").prop("disabled", true);
 			}else{
-				$("#ansTitle").val("답변제목");
+				$("#ansTitle").val("답변 제목");
 				$("#ansContent").val("답변내용");
 				$("#btnWrite").prop("disabled", true);
 				$("#btnModify").prop("disabled", false);
