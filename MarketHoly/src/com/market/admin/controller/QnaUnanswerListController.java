@@ -16,27 +16,28 @@ import org.json.JSONObject;
 
 import com.market.admin.dao.QnaAdminDao;
 import com.market.admin.dto.QnaAdminDto;
+import com.market.page.util.PageUtil;
 
 @WebServlet("/admin/qnaUnanswerList.do")
 public class QnaUnanswerListController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		final int PAGE_CNT = 10; // 글 목록 개수
-		final double PAGE_BLOCK = 10.0; // 페이지 블록
+		
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int startRow = (pageNum - 1) * PAGE_CNT + 1;
-		int endRow = (startRow + PAGE_CNT) - 1;
-		
 		QnaAdminDao qnaDao = QnaAdminDao.getInstance();
-		ArrayList<QnaAdminDto> qnaList = qnaDao.selUnanswerList(startRow, endRow);
+		int totalRowCount = qnaDao.selUnanswerCount();
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int startRow=pu.getStartRow()-1;
+		int pageCount = pu.getTotalPageCount();
+		int startPageNum = pu.getStartPageNum();
+		int endPageNum = pu.getEndPageNum();
+		
+		ArrayList<QnaAdminDto> qnaList = qnaDao.selUnanswerList(startRow);
 
-		int pageCount = (int) Math.ceil(qnaDao.selUnanswerCount() / PAGE_BLOCK);
-		int startPageNum = (int) (Math.floor((pageNum - 1) / PAGE_BLOCK) * PAGE_BLOCK + 1);
-		int endPageNum = (int) (startPageNum + (PAGE_BLOCK - 1));
 		if (pageCount < endPageNum) {
 			endPageNum = pageCount;
 		}

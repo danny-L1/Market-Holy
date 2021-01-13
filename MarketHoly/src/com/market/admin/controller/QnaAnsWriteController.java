@@ -24,18 +24,18 @@ public class QnaAnsWriteController extends HttpServlet {
 		MemberDto memberDto = (MemberDto) session.getAttribute("memberDto");
 
 		QnaAdminDao dao = QnaAdminDao.getInstance();
-
+		//int qnum = dao.getMaxNum()+1;
 		int pnum = Integer.parseInt(req.getParameter("pnum"));
 		int num = memberDto.getNum();
-		int qnum = Integer.parseInt(req.getParameter("qnum"));
+		int ref = Integer.parseInt(req.getParameter("qnum")); //답변할 글의 글번호를 답변의 ref에 넣어주기
 		String id = memberDto.getId();
 		String name = memberDto.getName();
 		String title = req.getParameter("title");
 		String content = req.getParameter("content");
-		int ref = qnum;
 		
-		int n = dao.insAns(new QnaDto(pnum, num, qnum, id, name, title, content, ref, null, "N", "N"));
-
+		
+	
+		int n = dao.insAns(new QnaDto(pnum, num, 0, id, name, title, content, ref, null, "N", "N"));
 		JSONObject json = new JSONObject();
 		json.put("n", n);
 

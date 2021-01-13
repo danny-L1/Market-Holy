@@ -50,10 +50,10 @@ nav {
 				<thead>
 					<tr>
 						<th style="width: 5%">번호</th>
-						<th style="width: 27%">상품명</th>
-						<th style="width: 34%">제목</th>
-						<th style="width: 8%">작성자</th>
-						<th style="width: 13%">작성일</th>
+						<th style="width: 25%">상품명</th>
+						<th style="width: 40%">제목</th>
+						<th style="width: 20%">작성자</th>
+						<th style="width: 20%">작성일</th>
 						<th class="hidden">내용</th>
 						<th class="hidden">상품 번호</th>
 						<th class="hidden">level</th>
@@ -77,6 +77,7 @@ nav {
 						<div class="col-md-12 form-group">
 							<input type="hidden" id="quePnum">
 							<input type="hidden" id="queQnum">
+							
 							<label class="label label-success">질문 내용</label>
 							<textarea id="queContent" class="form-control" rows="10" cols="100" style="resize: none;" disabled="disabled"></textarea>
 						</div>
@@ -255,7 +256,8 @@ nav {
 		for(let dto of data){
 			let replyIcon = "";
 			let row = "";
-			if(dto.level >= 2){
+		
+			if(dto.ref >= 0){
 				replyIcon = "<span class='glyphicon glyphicon-check'></span>";
 				//row += "<tr>";
 				row += "<tr data-toggle='modal' data-target='#qnaAnswer' style='cursor:pointer;'>";
@@ -270,11 +272,10 @@ nav {
 			row += "<td>"+dto.reg_date+"</td>";
 			row += "<td class='hidden'>"+dto.content+"</td>";
 			row += "<td class='hidden'>"+dto.pnum+"</td>";
-			row += "<td class='hidden'>"+dto.level+"</td>";
+			row += "<td class='hidden'>"+dto.ref+"</td>";
 			row += "</tr>";
 			tbody.append(row);
-			
-			if(dto.level>=2){
+			if(dto.ref >= 0 ){
 				tbody.find("tr").last().css("color","blue");					
 			}
 		}
@@ -388,20 +389,23 @@ nav {
 	function setAnswerModalVal(){
 		$("#qna-table>tbody>tr").click(function() {
 			$("#queQnum").val($(this).children().eq(0).text());
-			$("#queContent").val($(this).children().eq(6).text());
-			$("#quePnum").val($(this).children().eq(7).text());
-			if($(this).children().eq(8).text() == 1){
+			$("#queContent").val($(this).children().eq(5).text());
+			$("#quePnum").val($(this).children().eq(6).text());
+			
+
+			if($(this).children().eq(7).text()==null){
 				$("#ansTitle").val("");
 				$("#ansContent").val("");
 				$("#btnWrite").prop("disabled", false);
 				$("#btnModify").prop("disabled", true);
 			}else{
-				$("#ansTitle").val($(this).children().eq(3).text());
-				$("#ansContent").val($(this).children().eq(6).text());
+				$("#ansTitle").val("답변제목");
+				$("#ansContent").val("답변내용");
 				$("#btnWrite").prop("disabled", true);
 				$("#btnModify").prop("disabled", false);
 			}
 		});
+		
 	}
 	
 	function pagination(data, funcName){

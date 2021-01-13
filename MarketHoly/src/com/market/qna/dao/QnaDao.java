@@ -50,20 +50,12 @@ public class QnaDao {
 		PreparedStatement pstmt2 = null;
 		try {
 			con = JDBCUtil.getConn();
-			int boardNum = getMaxNum() + 1;// 등록할 글번호 구하기
-			int qnum = dto.getPnum();
-			int ref = dto.getRef();
-			if (qnum == 0) { // 새글인 경우
-				ref = boardNum;
-			} else {
-				
-			}
-
+	
 			String sql2 = "insert into qna values(?,?,?,?,?,?,?,null,now(),'N',?)";
 			pstmt2 = con.prepareStatement(sql2);
 			pstmt2.setInt(1, dto.getPnum());
 			pstmt2.setInt(2, dto.getNum());
-			pstmt2.setInt(3, boardNum);
+			pstmt2.setInt(3, 0);
 			pstmt2.setString(4, dto.getId());
 			pstmt2.setString(5, dto.getName());
 			pstmt2.setString(6, dto.getTitle());
@@ -107,7 +99,7 @@ public class QnaDao {
 
 	public ArrayList<QnaDto> list(int startRow, int endRow, int pnums) {
 		String sql = "select * from qna \r\n" + 
-				"where pnum = ? and ref=1 and del_yn = 'N' \r\n" + 
+				"where pnum = ? and isnull(ref) and del_yn = 'N' \r\n" + 
 				"order by qnum desc\r\n" + 
 				"limit ?,?";
 		

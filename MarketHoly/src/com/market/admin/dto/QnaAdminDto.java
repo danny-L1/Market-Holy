@@ -7,16 +7,19 @@ public class QnaAdminDto {
 	private String pname;
 	private String title;
 	private String name;
+	private int ref;
 	private Date reg_date;
 	private String content;
 	private int pnum;
 	
-	public QnaAdminDto(int qnum, String pname, String title, String name, Date reg_date, String content, int pnum) {
+	public QnaAdminDto(int qnum, String pname, String title, String name, int ref, Date reg_date, String content,
+			int pnum) {
 		super();
 		this.qnum = qnum;
 		this.pname = pname;
 		this.title = title;
 		this.name = name;
+		this.ref = ref;
 		this.reg_date = reg_date;
 		this.content = content;
 		this.pnum = pnum;
@@ -45,6 +48,12 @@ public class QnaAdminDto {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public int getRef() {
+		return ref;
+	}
+	public void setRef(int ref) {
+		this.ref = ref;
+	}
 	public Date getReg_date() {
 		return reg_date;
 	}
@@ -64,6 +73,4 @@ public class QnaAdminDto {
 		this.pnum = pnum;
 	}
 	
-	
-
 }

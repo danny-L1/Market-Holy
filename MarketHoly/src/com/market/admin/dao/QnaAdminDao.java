@@ -33,20 +33,20 @@ public class QnaAdminDao {
 			if (kind.equals("writer")) {
 				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  and isnull(ref) AND a.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  where isnull(ref) or ref=0 AND a.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc \n" +
 						" limit ?,?";
 				
 			} else if (kind.equals("pname")) {
 				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  and isnull(ref) AND b.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  where isnull(ref) or ref=0 AND b.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc \n" +
 						" limit ?,?";
 			} else {
 				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  and isnull(ref) and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  where isnull(ref) or ref=0 and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc "
 						+ " limit ?,?";
 			}
@@ -60,14 +60,15 @@ public class QnaAdminDao {
 				String pname = rs.getString("pname");
 				String title = rs.getString("title");
 				String name = rs.getString("name");
+				int ref = rs.getInt("ref");
 				Date reg_date = rs.getDate("reg_date");
 				String content = rs.getString("content");
 				int pnum = rs.getInt("pnum");
-				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum));
+				list.add(new QnaAdminDto(qnum, pname, title, name, ref, reg_date, content, pnum));
 			}
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return null;
 		} finally {
 			JDBCUtil.close(rs, pstmt, con);
@@ -81,7 +82,7 @@ public class QnaAdminDao {
 		try {
 			con = JDBCUtil.getConn();
 			con.setAutoCommit(false);
-			String sql2 = "update qna set qnum=qnum+1,ref=ref+1 where qnum >= ?";
+			String sql2 = "update qna set ref=0 where qnum = ?";
 			pstmt2 = con.prepareStatement(sql2);
 			pstmt2.setInt(1, dto.getQnum());
 			int n = pstmt2.executeUpdate();
@@ -130,7 +131,7 @@ public class QnaAdminDao {
 			rs.next();
 			return rs.getInt("maxnum");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return -1;
 		} finally {
 			JDBCUtil.close(rs, pstmt, con);
@@ -151,7 +152,7 @@ public class QnaAdminDao {
 						"FROM   qna a \r\n" + 
 						"       INNER JOIN product b \r\n" + 
 						"               ON a.pnum = b.pnum \r\n" + 
-						"WHERE  b.NAME pame LIKE '%" + word + "%' ";
+						"WHERE  b.NAME like '%" + word + "%' ";
 			} else {
 				sql = "select ifnull(count(*),0) cnt from qna where name like '%" + word + "%'";
 			}
@@ -167,7 +168,7 @@ public class QnaAdminDao {
 		}
 	}
 
-	public ArrayList<QnaAdminDto> selUnanswerList(int startRow, int endRow) {
+	public ArrayList<QnaAdminDto> selUnanswerList(int startRow) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -175,7 +176,7 @@ public class QnaAdminDao {
 		try {
 			con = JDBCUtil.getConn();
 			String sql = "SELECT a.*, b.name pname FROM   qna a INNER JOIN product b \n" + 
-					"ON a.pnum = b.pnum WHERE ref =1 AND a.del_yn = 'N'\n" + 
+					"ON a.pnum = b.pnum WHERE isnull(ref) or ref=0 AND a.del_yn = 'N'\n" + 
 					"ORDER  BY qnum DESC"+
 					" limit ?,6";
 			pstmt = con.prepareStatement(sql);
@@ -186,10 +187,11 @@ public class QnaAdminDao {
 				String pname = rs.getString("pname");
 				String title = rs.getString("title");
 				String name = rs.getString("name");
+				int ref = rs.getInt("ref");
 				Date reg_date = rs.getDate("reg_date");
 				String content = rs.getString("content");
 				int pnum = rs.getInt("pnum");
-				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum));
+				list.add(new QnaAdminDto(qnum, pname, title, name, ref, reg_date, content, pnum));
 			}
 			return list;
 		} catch (SQLException e) {
@@ -225,68 +227,32 @@ public class QnaAdminDao {
 		}
 	}
 
-	public ArrayList<QnaAdminDto> selQnaAnsComList(int startRow, int endRow) {
+	public ArrayList<QnaAdminDto> selQnaAnsComList(int startRow, int aqnum) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		ArrayList<QnaAdminDto> list = new ArrayList<QnaAdminDto>();
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT * \r\n" + 
-					"FROM  (SELECT aa.*, \r\n" + 
-					"              ROWNUM rnum \r\n" + 
-					"       FROM   (WITH tmp_minus \r\n" + 
-					"                    AS (SELECT a.*, \r\n" + 
-					"                               (SELECT name \r\n" + 
-					"                                FROM   category \r\n" + 
-					"                                WHERE  cnum = b.cnum \r\n" + 
-					"                                       AND TYPE = b.TYPE) cname, \r\n" + 
-					"                               b.name                     pname, \r\n" + 
-					"                               LEVEL \r\n" + 
-					"                        FROM   qna a \r\n" + 
-					"                               inner join product b \r\n" + 
-					"                                       ON a.pnum = b.pnum \r\n" + 
-					"                        WHERE  a.del_yn = 'N' \r\n" + 
-					"                        START WITH ref IS NULL \r\n" + 
-					"                        CONNECT BY PRIOR a.qnum = a.ref \r\n" + 
-					"                        MINUS \r\n" + 
-					"                        SELECT a.*, \r\n" + 
-					"                               (SELECT name \r\n" + 
-					"                                FROM   category \r\n" + 
-					"                                WHERE  cnum = b.cnum \r\n" + 
-					"                                       AND TYPE = b.TYPE) cname, \r\n" + 
-					"                               b.name                     pname, \r\n" + 
-					"                               LEVEL \r\n" + 
-					"                        FROM   qna a \r\n" + 
-					"                               inner join product b \r\n" + 
-					"                                       ON a.pnum = b.pnum \r\n" + 
-					"                        WHERE  a.qnum NOT IN(SELECT ref \r\n" + 
-					"                                             FROM   qna \r\n" + 
-					"                                             WHERE  ref IS NOT NULL) \r\n" + 
-					"                               AND a.ref IS NULL \r\n" + 
-					"                               AND a.del_yn = 'N' \r\n" + 
-					"                        START WITH ref IS NULL \r\n" + 
-					"                        CONNECT BY PRIOR a.qnum = a.ref) \r\n" + 
-					"               SELECT * \r\n" + 
-					"                FROM   tmp_minus \r\n" + 
-					"                ORDER  BY qnum DESC) aa) \r\n" + 
-					"WHERE  rnum >= ? \r\n" + 
-					"       AND rnum <= ? \r\n" + 
-					"ORDER  BY qnum DESC ";
+			String sql = "SELECT a.*, b.name pname FROM  qna a INNER JOIN product b \n" + 
+					"ON a.pnum = b.pnum WHERE ref = ? AND a.del_yn = 'N'\n" + 
+					"ORDER  BY qnum DESC "+ 
+					"limit ?,6";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
+			System.out.println(sql);
+			pstmt.setInt(1, aqnum);
+			pstmt.setInt(2, startRow);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				int qnum = rs.getInt("qnum");
 				String pname = rs.getString("pname");
 				String title = rs.getString("title");
 				String name = rs.getString("name");
+				int ref = rs.getInt("ref");
 				Date reg_date = rs.getDate("reg_date");
 				String content = rs.getString("content");
 				int pnum = rs.getInt("pnum");
-				int level = rs.getInt("level");
-				list.add(new QnaAdminDto(qnum, pname, title, name, reg_date, content, pnum));
+				list.add(new QnaAdminDto(qnum, pname, title, name, ref, reg_date, content, pnum));
 			}
 			return list;
 		} catch (SQLException e) {
@@ -297,41 +263,17 @@ public class QnaAdminDao {
 		}
 	}
 
-	public double selQnaAnsComCount() {
+	public int selQnaAnsComCount(int aqnum) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
-					"FROM  (SELECT a.*, \r\n" + 
-					"              (SELECT NAME \r\n" + 
-					"               FROM   category \r\n" + 
-					"               WHERE  cnum = b.cnum \r\n" + 
-					"                      AND type = b.type) cname, \r\n" + 
-					"              b.NAME                     pname \r\n" + 
-					"       FROM   qna a \r\n" + 
-					"              INNER JOIN product b \r\n" + 
-					"                      ON a.pnum = b.pnum \r\n" + 
-					"       WHERE  a.del_yn = 'N' \r\n" + 
-					"       minus \r\n" + 
-					"       SELECT * \r\n" + 
-					"       FROM  (SELECT a.*, \r\n" + 
-					"                     (SELECT NAME \r\n" + 
-					"                      FROM   category \r\n" + 
-					"                      WHERE  cnum = b.cnum \r\n" + 
-					"                             AND type = b.type) cname, \r\n" + 
-					"                     b.NAME                     pname \r\n" + 
-					"              FROM   qna a \r\n" + 
-					"                     INNER JOIN product b \r\n" + 
-					"                             ON a.pnum = b.pnum \r\n" + 
-					"              WHERE  a.qnum NOT IN(SELECT ref \r\n" + 
-					"                                   FROM   qna \r\n" + 
-					"                                   WHERE  ref IS NOT NULL) \r\n" + 
-					"                     AND a.ref IS NULL \r\n" + 
-					"                     AND a.del_yn = 'N' \r\n" + 
-					"              ORDER  BY qnum DESC)) ";
+			String sql = "SELECT ifnull(Count(*), 0) cnt FROM  qna a INNER JOIN product b \n" + 
+					"ON a.pnum = b.pnum WHERE ref = ? AND a.del_yn = 'N'\n" + 
+					"ORDER  BY qnum DESC ";
 			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, aqnum);
 			rs = pstmt.executeQuery();
 			rs.next();
 			return rs.getInt("cnt");
