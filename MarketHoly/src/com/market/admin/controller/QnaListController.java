@@ -62,6 +62,7 @@ public class QnaListController extends HttpServlet {
 			json.put("pnum", dto.getPnum());
 			jarr.put(json);
 		}
+		
 
 		jsonArr.put(jarr);
 		jsonArr.put(startPageNum);

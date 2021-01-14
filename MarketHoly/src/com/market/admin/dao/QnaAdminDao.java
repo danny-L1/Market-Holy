@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import com.market.admin.dto.QnaAdminDto;
 import com.market.db.JDBCUtil;
+import com.market.product.dto.ProductDto;
 import com.market.qna.dto.QnaDto;
 
 public class QnaAdminDao {
@@ -33,20 +34,20 @@ public class QnaAdminDao {
 			if (kind.equals("writer")) {
 				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  where isnull(ref) or ref=0 AND a.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  where ref<=0 AND a.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc \n" +
 						" limit ?,?";
 				
 			} else if (kind.equals("pname")) {
 				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  where isnull(ref) or ref=0 AND b.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  where ref<=0  AND b.name LIKE '%" + word + "%' and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc \n" +
 						" limit ?,?";
 			} else {
 				sql = " select *,b.name pname from qna a \n" + 
 						" inner join product b \n" + 
-						" ON a.pnum = b.pnum  where isnull(ref) or ref=0 and a.del_yn = 'N' \n" + 
+						" ON a.pnum = b.pnum  where ref<=0  and a.del_yn = 'N' \n" + 
 						" order by a.reg_date desc "
 						+ " limit ?,?";
 			}
@@ -82,9 +83,9 @@ public class QnaAdminDao {
 		try {
 			con = JDBCUtil.getConn();
 			con.setAutoCommit(false);
-			String sql2 = "update qna set ref=0 where qnum = ?";
+			String sql2 = "update qna set ref = 0 where qnum = ?";
 			pstmt2 = con.prepareStatement(sql2);
-			pstmt2.setInt(1, dto.getQnum());
+			pstmt2.setInt(1, dto.getRef());
 			int n = pstmt2.executeUpdate();
 			if (n > 0) {
 				String sql = "insert into qna values(?,?,?,?,'관리자',?,?,?,now(),'N','N')";
@@ -95,7 +96,7 @@ public class QnaAdminDao {
 				pstmt.setString(4, dto.getId());
 				pstmt.setString(5, dto.getTitle());
 				pstmt.setString(6, dto.getContent());
-				pstmt.setInt(7, dto.getRef() + 1);
+				pstmt.setInt(7, dto.getRef());
 				return pstmt.executeUpdate();
 			}
 		} catch (SQLException e) {
@@ -176,7 +177,7 @@ public class QnaAdminDao {
 		try {
 			con = JDBCUtil.getConn();
 			String sql = "SELECT a.*, b.name pname FROM   qna a INNER JOIN product b \n" + 
-					"ON a.pnum = b.pnum WHERE isnull(ref) or ref=0 AND a.del_yn = 'N'\n" + 
+					"ON a.pnum = b.pnum WHERE ref=-1 AND a.del_yn = 'N'\n" + 
 					"ORDER  BY qnum DESC"+
 					" limit ?,6";
 			pstmt = con.prepareStatement(sql);
@@ -208,13 +209,8 @@ public class QnaAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
-					"FROM   qna a \r\n" + 
-					"WHERE  a.qnum NOT IN(SELECT ref \r\n" + 
-					"                     FROM   qna \r\n" + 
-					"                     WHERE  ref IS NOT NULL) \r\n" + 
-					"       AND a.ref IS NULL \r\n" + 
-					"       AND a.del_yn = 'N' ";
+			String sql = "SELECT ifnull(Count(*), 0) cnt FROM qna a \n"
+					+ "WHERE  a.qnum AND a.ref = -1 AND a.del_yn = 'N'";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			rs.next();
@@ -227,21 +223,18 @@ public class QnaAdminDao {
 		}
 	}
 
-	public ArrayList<QnaAdminDto> selQnaAnsComList(int startRow, int aqnum) {
+	public ArrayList<QnaAdminDto> selQnaAnsComList(int startRow) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		ArrayList<QnaAdminDto> list = new ArrayList<QnaAdminDto>();
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT a.*, b.name pname FROM  qna a INNER JOIN product b \n" + 
-					"ON a.pnum = b.pnum WHERE ref = ? AND a.del_yn = 'N'\n" + 
-					"ORDER  BY qnum DESC "+ 
-					"limit ?,6";
+			String sql = "SELECT a.*, b.name pname FROM  qna a INNER JOIN product b \n"
+					+ "ON a.pnum = b.pnum where ref = 0 AND a.del_yn = 'N'\n"
+					+ "ORDER  BY qnum DESC limit ?,6";
 			pstmt = con.prepareStatement(sql);
-			System.out.println(sql);
-			pstmt.setInt(1, aqnum);
-			pstmt.setInt(2, startRow);
+			pstmt.setInt(1, startRow);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				int qnum = rs.getInt("qnum");
@@ -263,17 +256,16 @@ public class QnaAdminDao {
 		}
 	}
 
-	public int selQnaAnsComCount(int aqnum) {
+	public int selQnaAnsComCount() {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
 			String sql = "SELECT ifnull(Count(*), 0) cnt FROM  qna a INNER JOIN product b \n" + 
-					"ON a.pnum = b.pnum WHERE ref = ? AND a.del_yn = 'N'\n" + 
+					"ON a.pnum = b.pnum WHERE ref = 0 AND a.del_yn = 'N'\n" + 
 					"ORDER  BY qnum DESC ";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, aqnum);
 			rs = pstmt.executeQuery();
 			rs.next();
 			return rs.getInt("cnt");
@@ -291,7 +283,7 @@ public class QnaAdminDao {
 		try {
 			con = JDBCUtil.getConn();
 			con.setAutoCommit(false);
-			String sql2 = "update qna set title=?,content=? where qnum = ?";
+			String sql2 = "update qna set title=?,content=? where ref = ?";
 			pstmt = con.prepareStatement(sql2);
 			pstmt.setString(1, title);
 			pstmt.setString(2, content);
@@ -315,4 +307,33 @@ public class QnaAdminDao {
 			JDBCUtil.close(null, pstmt, con);
 		}
 	}
+	
+	public QnaAdminDto getAnswer (int qnum) {
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		QnaAdminDto dto = null;
+		try {
+			con = JDBCUtil.getConn();
+			String sql ="select title, content from qna where ref =? limit 1"; 
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, qnum);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				String title = rs.getString("title");
+				String content = rs.getString("content");
+				dto = new QnaAdminDto(title, content);
+			}
+			return dto;
+
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+			return null;
+		} finally {
+			JDBCUtil.close(rs, pstmt, con);
+		}
+	
+	}
+
 }

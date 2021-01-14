@@ -24,7 +24,6 @@ public class QnaAnsWriteController extends HttpServlet {
 		MemberDto memberDto = (MemberDto) session.getAttribute("memberDto");
 
 		QnaAdminDao dao = QnaAdminDao.getInstance();
-		//int qnum = dao.getMaxNum()+1;
 		int pnum = Integer.parseInt(req.getParameter("pnum"));
 		int num = memberDto.getNum();
 		int ref = Integer.parseInt(req.getParameter("qnum")); //답변할 글의 글번호를 답변의 ref에 넣어주기

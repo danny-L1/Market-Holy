@@ -24,6 +24,11 @@ public class QnaAdminDto {
 		this.content = content;
 		this.pnum = pnum;
 	}
+	public QnaAdminDto(String title, String content) {
+		super();
+		this.title = title;
+		this.content = content;
+	}
 	public int getQnum() {
 		return qnum;
 	}

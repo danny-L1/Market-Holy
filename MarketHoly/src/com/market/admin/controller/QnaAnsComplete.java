@@ -26,9 +26,9 @@ public class QnaAnsComplete extends HttpServlet{
 		if (spageNum != null) {
 			pageNum = Integer.parseInt(spageNum);
 		}
-		int qnum = Integer.parseInt(req.getParameter("qnum"));
+
 		QnaAdminDao qnaDao = QnaAdminDao.getInstance();
-		int totalRowCount = (int) qnaDao.selQnaAnsComCount(qnum);
+		int totalRowCount = (int) qnaDao.selQnaAnsComCount();
 		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
 		int startRow=pu.getStartRow()-1;
 		int startPageNum = pu.getStartPageNum();
@@ -36,7 +36,7 @@ public class QnaAnsComplete extends HttpServlet{
 		int pageCount = pu.getTotalPageCount();
 		
 		
-		ArrayList<QnaAdminDto> qnaList = qnaDao.selQnaAnsComList(startRow,qnum);
+		ArrayList<QnaAdminDto> qnaList = qnaDao.selQnaAnsComList(startRow);
 		
 		
 		JSONArray jsonArr = new JSONArray();
@@ -50,6 +50,7 @@ public class QnaAnsComplete extends HttpServlet{
 			json.put("reg_date", dto.getReg_date());
 			json.put("content", dto.getContent());
 			json.put("pnum", dto.getPnum());
+			json.put("ref", dto.getRef());
 			jarr.put(json);
 		}
 

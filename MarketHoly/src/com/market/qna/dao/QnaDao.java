@@ -51,7 +51,7 @@ public class QnaDao {
 		try {
 			con = JDBCUtil.getConn();
 	
-			String sql2 = "insert into qna values(?,?,?,?,?,?,?,null,now(),'N',?)";
+			String sql2 = "insert into qna values(?,?,?,?,?,?,?,-1,now(),'N',?)";
 			pstmt2 = con.prepareStatement(sql2);
 			pstmt2.setInt(1, dto.getPnum());
 			pstmt2.setInt(2, dto.getNum());
@@ -99,7 +99,7 @@ public class QnaDao {
 
 	public ArrayList<QnaDto> list(int startRow, int endRow, int pnums) {
 		String sql = "select * from qna \r\n" + 
-				"where pnum = ? and isnull(ref) and del_yn = 'N' \r\n" + 
+				"where pnum = ? and ref >= 0 and del_yn = 'N' \r\n" + 
 				"order by qnum desc\r\n" + 
 				"limit ?,?";
 		

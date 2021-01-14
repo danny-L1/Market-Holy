@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <style>
 table, th, td {
@@ -30,18 +31,20 @@ nav {
 	</div>
 	<div class="row">
 		<div class="col-md-7 form-inline">
-			<span class="label label-success">검색 종류</span>
-			<select class="form-control" id="kind">
+			<span class="label label-success">검색 종류</span> <select
+				class="form-control" id="kind">
 				<c:forEach var="dto" items="${comList }">
 					<option value="${dto.val }">${dto.name }</option>
 				</c:forEach>
-			</select>
-			<input type="text" class="form-control" placeholder="검색어를 입력하세요" maxlength="30" id="txtWord">
-			<input type="button" class="btn btn-lg btn-primary" value="검색" id="btnSearch">
-			<input type="button" class="btn btn-lg btn-info" value="미답변 목록" id="btnUnanswer">
+			</select> <input type="text" class="form-control" placeholder="검색어를 입력하세요"
+				maxlength="30" id="txtWord"> <input type="button"
+				class="btn btn-lg btn-primary" value="검색" id="btnSearch"> <input
+				type="button" class="btn btn-lg btn-info" value="미답변 목록"
+				id="btnUnanswer">
 		</div>
 		<div class="col-md-5 form-inline">
-			<input type="button" class="btn btn-lg btn-warning pull-right" value="답변 완료 목록" id="btnAnsComplete">
+			<input type="button" class="btn btn-lg btn-warning pull-right"
+				value="답변 완료 목록" id="btnAnsComplete">
 		</div>
 	</div>
 	<div class="row">
@@ -66,7 +69,8 @@ nav {
 		</div>
 	</div>
 
-	<div class="modal fade" id="qnaAnswer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="qnaAnswer" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -75,25 +79,29 @@ nav {
 				<div class="modal-body">
 					<div class="row">
 						<div class="col-md-12 form-group">
-							<input type="hidden" id="quePnum">
-							<input type="hidden" id="queQnum">
-							
-							<label class="label label-success">질문 내용</label>
-							<textarea id="queContent" class="form-control" rows="10" cols="100" style="resize: none;" disabled="disabled"></textarea>
+							<input type="hidden" id="quePnum"> <input type="hidden"
+								id="queQnum"> <label class="label label-success">질문
+								내용</label>
+							<textarea id="queContent" class="form-control" rows="10"
+								cols="100" style="resize: none;" disabled="disabled"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12 form-group">
-							<label class="label label-success">제목</label>
-							<input id="ansTitle" type="text" class="form-control" placeholder="제목을 입력하세요" maxlength="30">
-							<label class="label label-success">답변</label>
-							<textarea id="ansContent" class="form-control" rows="10" cols="100" style="resize: none;"></textarea>
+							<label class="label label-success">제목</label> <input
+								id="ansTitle" type="text" class="form-control"
+								placeholder="제목을 입력하세요" maxlength="30"> <label
+								class="label label-success">답변</label>
+							<textarea id="ansContent" class="form-control" rows="10"
+								cols="100" style="resize: none;"></textarea>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" id="btnWrite">답변 등록</button>
-					<button type="button" class="btn btn-primary" id="btnModify" disabled="disabled">답변 수정</button>
+					<button type="button" class="btn btn-primary" id="btnWrite">답변
+						등록</button>
+					<button type="button" class="btn btn-primary" id="btnModify"
+						disabled="disabled">답변 수정</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
 				</div>
 			</div>
@@ -143,7 +151,6 @@ nav {
 			data:{pageNum:pageNum},
 			success:function(data){
 				tbodyRowAdd(data[0]);
-				
 				//페이징//
 				pageDiv = $("#page-div");
 				pageDiv.empty();
@@ -256,7 +263,7 @@ nav {
 		for(let dto of data){
 			let replyIcon = "";
 			let row = "";
-		
+
 			if(dto.ref >= 0){
 				replyIcon = "<span class='glyphicon glyphicon-check'></span>";
 				//row += "<tr>";
@@ -273,6 +280,7 @@ nav {
 			row += "<td class='hidden'>"+dto.content+"</td>";
 			row += "<td class='hidden'>"+dto.pnum+"</td>";
 			row += "<td class='hidden'>"+dto.ref+"</td>";
+			
 			row += "</tr>";
 			tbody.append(row);
 			if(dto.ref >= 0 ){
@@ -393,21 +401,35 @@ nav {
 			$("#quePnum").val($(this).children().eq(6).text());
 			
 
-			if($(this).children().eq(7).text()==null){
+			if($(this).children().eq(7).text()==-1){
 				$("#ansTitle").val("");
 				$("#ansContent").val("");
 				$("#btnWrite").prop("disabled", false);
 				$("#btnModify").prop("disabled", true);
 			}else{
-				$("#ansTitle").val("답변 제목");
-				$("#ansContent").val("답변내용");
-				$("#btnWrite").prop("disabled", true);
-				$("#btnModify").prop("disabled", false);
+				getAns($(this).children().eq(0).text());
 			}
 		});
 		
 	}
+	function getAns(qnum) {
+		jQuery.ajax({
+			dataType:"JSON",
+			url: `${cp}/admin/ansGet.do`,
+		 	method:"get",
+			data:{
+				qnum:qnum
+			},
+			success:function(data){
+			
+				$("#ansTitle").val(data.title);
+				$("#ansContent").val(data.content);
 	
+				$("#btnWrite").prop("disabled", true);
+				$("#btnModify").prop("disabled", false);
+			}
+		});
+	}
 	function pagination(data, funcName){
 		
 	}

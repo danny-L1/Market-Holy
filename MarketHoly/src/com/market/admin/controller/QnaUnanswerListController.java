@@ -52,6 +52,7 @@ public class QnaUnanswerListController extends HttpServlet {
 			json.put("reg_date", dto.getReg_date());
 			json.put("content", dto.getContent());
 			json.put("pnum", dto.getPnum());
+			json.put("ref", dto.getRef());
 			jarr.put(json);
 		}
 
