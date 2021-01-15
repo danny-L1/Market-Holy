@@ -23,7 +23,7 @@ public class MainController extends HttpServlet {
 		ServletContext app = req.getServletContext();
 		String cp = req.getContextPath();
 		app.setAttribute("cp", cp);
-		
+
 		
 		//"전체 카테고리"
 		CategoryDao dao = CategoryDao.getInstance();

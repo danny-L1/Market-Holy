@@ -6,7 +6,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%
-	//로그인한 아이디도 세션에있는거 가져오기(로그인 안되어있을때 장바구니에 담으면....?)
 	//재고수량 0인 상품 품절 표시
 	//장바구니 버튼 누르면 cart.do로 이동해서 pnum,수량,세션에 있는 아이디 넘겨주기(로그인 안되어있으면 login.do로)
 %>
@@ -27,6 +26,9 @@
 	${clist.name}
 </c:forEach>
 <br>
+
+
+	
 <!-- 정렬 필터 -->
 <form
 	action="${pageContext.request.contextPath }/product/list.do?cnum=${cnum }&type=${type }"
@@ -53,6 +55,7 @@
 					<a href="${cp }/product/detail.do?pnum=${pro.pnum}&cnum=${cnum}">
 						<img src="${cp }/img/${pro.thumb_save}" width="300px"
 							height="400px">
+							
 					</a>
 						<div style="position: absolute; top: 330px; left: 220px">
 							<button data-toggle="modal" data-target="#cartmodal"

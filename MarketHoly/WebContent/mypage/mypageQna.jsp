@@ -24,15 +24,15 @@
 
 			<c:forEach var='vo' items='${list }'> 
 				<tbody>
-					<tr onclick="showHidden(${vo.rnum2},'${vo.id }','${vo.locker }')">
-						<c:set var="cNum" value="${vo.rnum2-1}"/>
-						<td>${count-cNum}</td>
+					<tr onclick="showHidden(${vo.qnum},'${vo.id }','${vo.locker }')">
+						<c:set var="cNum" value="${vo.qnum}"/>
+						<td>${cNum}</td>
 						<td>
-							<c:if test="${vo.level > 1 }">
-								<c:forEach var="i" begin="1" end="${vo.level - 1 }">
+							<!-- 답글여부 <c:if test="">
+								<c:forEach var="i" begin="1" end="">
 									[re]&nbsp;
 								</c:forEach> 
-							</c:if>
+							</c:if>-->
 							${vo.title } 
 							<c:if test="${vo.locker == 'Y' }">
 								<img src="${pageContext.request.contextPath }/img/locker.jpg" width="30px" height="30px">
@@ -41,7 +41,7 @@
 						<td>${vo.id }</td>
 						<td>${vo.reg_date }</td>
 					</tr>
-					<tr id='${vo.rnum2 }' style='display: none;'>
+					<tr id='${vo.qnum }' style='display: none;'>
 						<td>${vo.content }</td>
 					</tr>
 				</tbody>

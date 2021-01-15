@@ -42,8 +42,7 @@ public class ListController extends HttpServlet {
 		if (sType != null) {
 			type = Integer.parseInt(sType);
 		}
-
-
+		
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {
@@ -54,10 +53,10 @@ public class ListController extends HttpServlet {
 		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
 		int startRow=pu.getStartRow()-1;
 		ArrayList<ProductDto> list = dao.getList(startRow, list_filter, cnum, type);
-	
+		
 		// 카테고리 이름 가져오기
-		CategoryDao cdao = CategoryDao.getInstance();
 		//cnum에 해당하는 세부 카테고리 가져오기
+		CategoryDao cdao = CategoryDao.getInstance();
 		ArrayList<CategoryDto> clist = cdao.selSub(cnum);
 		String cname = cdao.getName(type); //선택된 카테고리 이름
 		String tname = cdao.getName(cnum); //선택된 세부카테고리 이름

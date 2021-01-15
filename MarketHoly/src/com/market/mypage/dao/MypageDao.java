@@ -188,19 +188,17 @@ public class MypageDao {
 		}
 	}
 	
-	public ArrayList<QnaDto> mypageQna(String ids,int startRow, int endRow) {
+	public ArrayList<QnaDto> mypageQna(String ids,int startRow) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "select * from(select bb.*,rownum rnum2 from (select * from(select aa.*,rownum rnum from (select level,a.* from qna a where del_yn = 'N' start with ref is null connect by prior qnum = ref ORDER SIBLINGS BY qnum desc) aa) where id=?) bb)"
-					+ "where rnum2>=? and rnum2<=?";
+			String sql = "select * from qna  where del_yn = 'N' and id = ? and ref <=0 limit ?,6";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, ids);
 			pstmt.setInt(2, startRow);
-			pstmt.setInt(3, endRow);
 			rs = pstmt.executeQuery();
 			
 			ArrayList<QnaDto> list = new ArrayList<QnaDto>();
@@ -216,7 +214,7 @@ public class MypageDao {
 				Date reg_date = rs.getDate("reg_date");
 				String del_yn = rs.getString("del_yn");
 				String locker =rs.getString("locker");
-				QnaDto dto = new QnaDto(pnum, pnum, qnum, id, name, title, content, ref, reg_date, del_yn, locker); 			
+				QnaDto dto = new QnaDto(pnum, num, qnum, id, name, title, content, ref, reg_date, del_yn, locker); 			
 				list.add(dto);
 			}
 			return list;

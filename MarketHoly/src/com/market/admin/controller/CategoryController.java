@@ -22,7 +22,6 @@ public class CategoryController extends HttpServlet {
 		ArrayList<CategoryDto> catList = dao.selList();
 		req.setAttribute("catList", catList);
 
-		// ī�װ�,���� ����Ʈ �˻�
 		ArrayList<CategoryListDto> catListAll = dao.selListAll();
 		req.setAttribute("catListAll", catListAll);
 		req.getRequestDispatcher("/index.jsp?page=admin/category.jsp").forward(req, resp);
