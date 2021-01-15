@@ -1,6 +1,7 @@
 package com.market.admin.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -12,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.market.admin.dao.ProdDao;
 import com.market.admin.dto.ProdDto;
 import com.market.admin.dto.ProdInfoDto;
+import com.market.file.rename.MhFileRenamePolicy;
 import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 @WebServlet("/admin/prodAdd.do")
 public class ProdAddController extends HttpServlet {
@@ -21,12 +22,15 @@ public class ProdAddController extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		ServletContext app = req.getServletContext();
 		String path = app.getRealPath("/img");
-		MultipartRequest mr = new MultipartRequest(req, path, 1024 * 1024 * 50, "utf-8", new DefaultFileRenamePolicy());
+		MultipartRequest mr = new MultipartRequest(req, path, 1024 * 1024 * 50, "utf-8", new MhFileRenamePolicy());
+		
+		
 		String catType = mr.getParameter("catType");
 		int cnum = Integer.parseInt(catType.substring(0,catType.indexOf("|")));
 		int type = Integer.parseInt(catType.substring(catType.indexOf("|")+1));
 		int price = Integer.parseInt(mr.getParameter("price"));
 		int stock = Integer.parseInt(mr.getParameter("stock"));
+		
 		String name = mr.getParameter("name");
 		String description = mr.getParameter("description");
 		String thumb_org = mr.getOriginalFileName("thumb");

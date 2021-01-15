@@ -37,7 +37,7 @@ public class OrderAdminDao {
 						"(SELECT pname || case bb.cnt when 1 then ' 외 ' || bb.cnt || '건' end as prodName\r\n" + 
 						"FROM   order_product aa, \r\n" + 
 						"(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n" + 
-						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 0) prodName,\r\n" + 
+						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 1) prodName,\r\n" + 
 						"(select rating from member where num = a.num and del_yn='N') rating \r\n" + 
 						"FROM   orders a \r\n" + 
 						"WHERE status IN( " + pStatus + " ) " + 
@@ -47,14 +47,14 @@ public class OrderAdminDao {
 				sql = "SELECT a.*,\r\n" + 
 						"(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n" + 
 						"(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n" + 
-						"(SELECT pname || case bb.cnt when 1 then ' 외 ' || bb.cnt || '건' end as prodName\r\n" + 
+						"(SELECT pname as prodName \r\n" + 
 						"FROM   order_product aa, \r\n" + 
 						"(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n" + 
-						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 0) prodName,\r\n" + 
+						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 1) prodName,\r\n" + 
 						"(select rating from member where num = a.num and del_yn='N') rating \r\n" + 
 						"FROM   orders a \r\n" + 
 						"WHERE status IN( " + pStatus + " ) " + 
-						"ORDER  BY reg_date DESC limit ?,6;";
+						"ORDER  BY reg_date DESC limit ?,6";
 			}
 				
 			pstmt = con.prepareStatement(sql);

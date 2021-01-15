@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.market.page.util.PageUtil;
 import com.market.product.dao.ProductDao;
 import com.market.product.dto.ProductDto;
 import com.market.review.dao.ReviewDao;
@@ -31,19 +32,17 @@ public class ListReviewController extends HttpServlet {
 		if(spageNum!=null) {
 			pageNum=Integer.parseInt(spageNum);
 		}
-		int startRow=(pageNum-1)*5+1;
-		int endRow=startRow+4;
 		
 		ReviewDao dao = ReviewDao.getInstance();
-		ArrayList<ReviewDto> list = dao.listReview(startRow,endRow,pnum);
+		int totalRowCount= dao.getCount();
+		PageUtil pu=new PageUtil(pageNum, totalRowCount, 6, 2);
+		int startRow=pu.getStartRow()-1;
+		ArrayList<ReviewDto> list = dao.listReview(startRow,pnum);
 		
+		int pageCount = pu.getTotalPageCount();
+		int startPageNum = pu.getStartPageNum(); 
+		int endPageNum = pu.getEndPageNum();
 		
-		int pageCount=(int)Math.ceil(dao.getCount()/5.0);
-		int startPageNum=((pageNum-1)/4)*4+1;
-		int endPageNum=startPageNum+3;
-		if(pageCount<endPageNum) {
-			endPageNum=pageCount;
-		}
 		HttpSession session=req.getSession();
 		String id=(String)session.getAttribute("id");
 		

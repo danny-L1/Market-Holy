@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.market.file.rename.MhFileRenamePolicy;
 import com.market.review.dao.ReviewDao;
 import com.market.review.dto.ReviewDto;
 import com.oreilly.servlet.MultipartRequest;
@@ -22,15 +23,13 @@ public class ReviewWriteController extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	
 		String upload = req.getServletContext().getRealPath("/img");
-	
-
 		
 		MultipartRequest mr = new MultipartRequest(
 					req,
 					upload,
 					1025*1024*5,
 					"utf-8",
-					new DefaultFileRenamePolicy()
+					new MhFileRenamePolicy()
 				);
 	
 		int onum =  Integer.parseInt(mr.getParameter("onum"));

@@ -65,7 +65,7 @@ public class ReviewDao {
 		
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "insert into review values(?,?,?,seq_review_num.nextval,?,?,?,?,now(),?,?,'N')";
+			String sql = "insert into review values(?,?,?,0,?,?,?,?,now(),?,?,'N')";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, dto.getOnum());
 			pstmt.setInt(2, dto.getPnum());
@@ -113,7 +113,7 @@ public class ReviewDao {
 	
 	
 	
-	public ArrayList<ReviewDto> listReview(int startRow,int endRow,int pnums){ 
+	public ArrayList<ReviewDto> listReview(int startRow,int pnums){ 
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -121,15 +121,13 @@ public class ReviewDao {
 		try {
 			con = JDBCUtil.getConn();
 		
-			String sql ="select * from"
-					+ "(select aa.*,rownum rnums from "
-					+ "(select * from review order by num desc)aa) "
-					+ "where rnums>=? and rnums<=? and pnum=?";
+			String sql ="select * from review where pnum = ?  "
+					+ "order by num desc "
+					+ "limit ?,6";
 			
 			pstmt =con.prepareStatement(sql);
-			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
-			pstmt.setInt(3, pnums);
+			pstmt.setInt(1, pnums);
+			pstmt.setInt(2, startRow);
 			rs = pstmt.executeQuery();
 			
 			
