@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <style>
 #s {
 	font-size: 20px;
@@ -62,8 +63,35 @@
 					<button type="button" class="btn btn-default" onclick="plus(${status.index})">
 					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 					</button></td>
-				<td><input type="hidden" name="cart-price" value='${cart1.price}'> 
-				<label class="sum" id="sum">${cart1.price*cart1.EA}</label>
+				<td>
+				<c:set var="sprice" value="${cart1.price*(1-cart1.percent) }" /> <!-- 세일가격 -->
+				<input type="hidden" id="orgsum" value="${cart1.price*cart1.EA}"> 
+				<b> <c:choose>
+						<c:when test="${cart1.percent==1 || cart1.percent==0.0}">
+							<input type="hidden" name = "discount" class ="discount" value ="0">
+							<input type="hidden" name="cart-price" value='${cart1.price}'> 
+							<label class="sum" id="sum">
+								<fmt:formatNumber value="${cart1.price*cart1.EA}" type="number" />
+							</label>
+							원
+						</c:when>
+						<c:otherwise>
+						
+							<input type="hidden" name = "discount" class ="discount" value = 
+								"<fmt:formatNumber value="${(cart1.price - sprice) * cart1.EA }" type="number" />">
+							<input type="hidden" name="cart-price" value="${(sprice+(1-(sprice%1))%1 )*cart1.EA}"> 
+							
+								<span class="orp"><del>${cart1.price *cart1.EA}원</del></span>
+							
+							<span class="emph">→</span>
+							<label class="sum" id="sum">
+								<fmt:formatNumber value="${(sprice+(1-(sprice%1))%1 )*cart1.EA}" type="number" />
+							</label>원
+						</c:otherwise>
+					</c:choose>
+					
+				</b>
+				
 				</td>
 			</tr>
 		</c:forEach>
@@ -89,7 +117,7 @@
 			<br>
 			<input type="text" name="DCprice" id="DCprice" readonly style="border:0 ;text-align: center;">
 			<br>
-			<input type="hidden" name="DCprice" value='${cart1.percent}'> 
+			<input type="hidden" name="DCprice"> 
 			
 			<!-- cart.percent -->
 		</div>
@@ -137,22 +165,26 @@
 		var undercheck = document.getElementsByName("undercheck");
 		var EA = document.querySelectorAll(".EA");
 		var sum = document.querySelectorAll(".sum");
+		var discount = document.querySelectorAll(".discount");
 		var cartPrice = document.getElementsByName("cart-price");
 		var total = document.getElementById("total");
 		var DCprice = document.getElementById("DCprice");
-		var finalprice=document.getElementById("finalprice")
-		var shipping=document.getElementById("shipping")
-		total.value = 0;
+		var finalprice=document.getElementById("finalprice");
+		var shipping=document.getElementById("shipping");
 		var price = 0;
+		var dc = 0;
+		total.value = 0;
 		for(var i=0;i<undercheck.length;i++){
 			if (undercheck[i].checked==true) {
 				sum[i].innerHTML = parseInt(EA[i].value) * parseInt(cartPrice[i].value);
 				price += parseInt(total.value) + parseInt(sum[i].innerHTML);
+				dc += parseInt(discount[i].value) * parseInt(EA[i].value);
 			}
 		}
 		total.value = price;
 		price += parseInt(shipping.value);
 		finalprice.value = price;
+		DCprice.value = dc;
 	}
 	
 	
@@ -160,12 +192,15 @@
 		//var EA=document.getElementById("EA");
 		var EA = document.querySelectorAll(".EA");
 		var sum = document.querySelectorAll(".sum");
+		var discount = document.querySelectorAll(".discount");
 		var cartPrice = document.getElementsByName("cart-price");
 		var total = document.getElementById("total");
 		var shipping = document.getElementById("shipping").value;
+		var DCprice = document.getElementById("DCprice");
 		
 		EA[index].value=parseInt(EA[index].value)+1;
 		sum[index].innerHTML = cartPrice[index].value * (parseInt(EA[index].value));
+		DCprice.value = parseInt(DCprice.value) + parseInt(discount[index].value);
 		var undercheck = document.getElementsByName("undercheck");
 		if(undercheck[index].checked == true){
 			total.value =  parseInt(total.value) + parseInt(cartPrice[index].value);
@@ -184,15 +219,18 @@
 	function minus(index) {
 		var EA = document.querySelectorAll(".EA");	
 		var sum = document.querySelectorAll(".sum");
+		var discount = document.querySelectorAll(".discount");
 		var cartPrice = document.getElementsByName("cart-price");
 		var total = document.getElementById("total");
 		var shipping=parseInt(2500);
+		var DCprice = document.getElementById("DCprice");
 			if(EA[index].value<=1){
 				alert("최소수량입니다");
 			}else{
 			
 			EA[index].value =parseInt(EA[index].value)-1; 
-			sum[index].innerHTML = cartPrice[index].value * (parseInt(EA[index].value));  
+			sum[index].innerHTML = cartPrice[index].value * (parseInt(EA[index].value)); 
+			DCprice.value = parseInt(DCprice.value) - parseInt(discount[index].value);
 			var undercheck = document.getElementsByName("undercheck");
 			if(undercheck[index].checked == true){
 				total.value =  parseInt(total.value) - parseInt(cartPrice[index].value);

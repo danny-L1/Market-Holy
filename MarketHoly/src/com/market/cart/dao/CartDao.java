@@ -27,7 +27,7 @@ public class CartDao {
 			return pstmt.executeUpdate();
 
 		} catch (SQLException se) {
-			se.printStackTrace();
+			System.out.println(se.getMessage());
 			return -1;
 		} finally {
 			JDBCUtil.close(null, pstmt, con);
@@ -66,7 +66,7 @@ public class CartDao {
 			
 
 		} catch (SQLException se) {
-			se.printStackTrace();
+			System.out.println(se.getMessage());
 			return null;
 
 		} finally {

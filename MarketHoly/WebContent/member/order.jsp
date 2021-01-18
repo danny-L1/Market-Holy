@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
 
@@ -31,7 +32,8 @@
 						<td><input type="checkbox" size="5" name="undercheck"></td>
 						<td>${pname[status.index]}<input type="hidden" name="pname" value=${pname[status.index]}></td>
 						<td>${EA[status.index]}<input type="hidden" name="EA" value=${EA[status.index]}></td>
-						<td>${cartPrice[status.index] * EA[status.index]}</td>
+						<td><fmt:formatNumber value="${cartPrice[status.index] * EA[status.index]}" type="number" />
+						</td>
 					</tr>
 					
 				</c:forEach>
@@ -133,10 +135,12 @@
  			</c:when>
  			<c:otherwise>
  				<h3>할인금액 :${DCprice[0] } </h3>
-				<input type="hidden" name="DCprice" readonly="readonly"   value="${DCprice[0] }">
+ 				
+				<input type="hidden" name="DCprice" readonly="readonly"   value="<fmt:formatNumber 
+				value="${DCprice[0] }" type="number" />">
  			</c:otherwise>
  		</c:choose>
-		<h3>총 결제금액 :${finalprice[0]} </h3>
+		<h3>총 결제금액 :<fmt:formatNumber value="${finalprice[0]}" type="number" /> </h3>
 		<input type="hidden" name="finalprice" value="${finalprice[0]}">
 		<span class='text-muted'> 결제 금액을 정확하게 확인 후 결제를 진행하세요 </span>
 		<hr style="border: solid 1px purple;">

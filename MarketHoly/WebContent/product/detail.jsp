@@ -83,7 +83,7 @@ h1, h2, h3 {
 	<h1>
 		<c:set var="sprice" value="${dto.price*(1-dto.percent) }" />
 		<b> <c:choose>
-				<c:when test="${dto.percent==1}">
+				<c:when test="${dto.percent==1 || dto.percent==0.0}">
 					<fmt:formatNumber value="${dto.price}" type="number" />
 				</c:when>
 				<c:otherwise>

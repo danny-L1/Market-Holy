@@ -65,7 +65,7 @@ a:visited {
 						<div id="price">
 						<c:set var="sprice" value="${pro.price*(1-pro.percent) }"/>
 							<b> <c:choose>
-									<c:when test="${pro.percent==1}">
+									<c:when test="${pro.percent==1 || dto.percent==0.0}">
 										<fmt:formatNumber value="${pro.price}" type="number"/>
 									</c:when>
 									<c:otherwise>
