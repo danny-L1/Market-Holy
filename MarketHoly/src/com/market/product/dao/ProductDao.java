@@ -53,6 +53,9 @@ public class ProductDao {
 					sql += " and name like ?";
 					pstmt = con.prepareStatement(sql);
 					pstmt.setString(1, "%" + keyword + "%");
+				} else {
+					sql += " order by reg_date desc";
+					pstmt = con.prepareStatement(sql);
 				}
 
 			} else if (type == -1) {
@@ -91,13 +94,13 @@ public class ProductDao {
 			con = JDBCUtil.getConn();
 			sql = "select ifnull(count(p.pnum),0) cnt from product p";
 			if (filter.equals("new")) {
-				sql += " where reg_date between DATE_SUB(now(), interval 7 day) and now()";
+				sql += " where reg_date between DATE_SUB(now(), interval 7 day) and now() and p.del_yn='N'";
 
 			} else if (filter.equals("best")) {
-				sql += ",order_product op where p.pnum=op.pnum group by p.pnum";
+				sql += ",order_product op where p.pnum=op.pnum group by p.pnum and p.del_yn='N'";
 
 			} else if (filter.equals("sale")) {
-				sql += ",sale s where p.pnum=s.pnum";
+				sql += ",sale s where p.pnum=s.pnum and p.del_yn='N'";
 			}
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -167,10 +170,10 @@ public class ProductDao {
 			sql = "select p.*,ifnull(s.percent,1)percent \r\n" + 
 					"from product p left outer join sale s on(p.pnum = s.pnum)\r\n" + 
 					"where 1=1 "; 
-			if (type == -1) {
+			if (type == -1) { //대분류
 				sql += "and type=?";
 				paramList.add(cnum);
-			} else if (cnum == 0 && type == 0) {
+			} else if (cnum == 0 && type == 0) { //카테고리 x
 				sql += "";
 			} else {
 				sql += "and cnum=? and type=?";
@@ -246,11 +249,10 @@ public class ProductDao {
 		try {
 			con = JDBCUtil.getConn();
 			if (filter.equals("new")) {
-				sql = "select p.*,ifnull(s.percent,1)percent  \r\n" + 
-						"from product p left outer join sale s on p.pnum = s.pnum\r\n" + 
-						"between date(now()-7) and date(now())\r\n" + 
-						"and p.del_yn='N' "+
-						" order by reg_date desc "+
+				sql = "select p.*,ifnull(s.percent,1)percent  from product p\n"
+						+ "left outer join sale s on p.pnum = s.pnum  \n"
+						+ "where p.reg_date between DATE_SUB(NOW(), INTERVAL 7 DAY) and NOW() and P.del_yn='N'\n"
+						+ "order by reg_date desc "+
 						"limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
@@ -277,12 +279,11 @@ public class ProductDao {
 						"on a.pnum = b.pnum\n" + 
 						"where del_yn='N'\n" + 
 						"group by a.pnum\n" + 
-						"order by cnt desc)aa, sale s group by aa.pnum "+
+						"order by cnt desc)aa, sale s "
+						+ "where s.pnum =aa.pnum group by aa.pnum "+
 						"limit ?,6";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, startRow);
-
-
 				rs = pstmt.executeQuery();
 
 				while (rs.next()) {
@@ -293,9 +294,10 @@ public class ProductDao {
 					int stock = rs.getInt("stock");
 					String thumb_save = rs.getString("thumb_save");
 					String description = rs.getString("description");
-					float percent=rs.getInt("percent");
+					float percent=rs.getFloat("percent");
 					list.add(
 							new ProductDto(pnum, name, reg_date, price, stock, thumb_save, description, percent));
+				
 				}
 			} else if (filter.equals("sale")) {
 				sql = "select p.pnum,p.name pname,p.reg_date,p.price,p.stock,p.thumb_save,\r\n" + 

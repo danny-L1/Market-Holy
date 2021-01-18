@@ -19,23 +19,23 @@ public class OrdersDto {
 	private String del_yn;
 	private String id;
 	private int EA;
-	private int percent;
+	private float percent;
 
 	
 	
-	public int getPercent() {
+	public float getPercent() {
 		return percent;
 	}
 
-	public void setPercent(int percent) {
+	public void setPercent(float percent) {
 		this.percent = percent;
 	}
 
-	public OrdersDto(String thumb_save,int cartnum,String id,int pnum,int EA,String name,int percent) {
+	public OrdersDto(String thumb_save,int cartnum,String id,int pnum,int EA,String name,float percent) {
 		//주문 상세 장바구니,상품 테이블
 	}
 	
-	public OrdersDto(String thumb_save, int cartnum, String id, int pnum, int EA, String name, int price, int percent) {
+	public OrdersDto(String thumb_save, int cartnum, String id, int pnum, int EA, String name, int price, float percent) {
 		
 	}
 

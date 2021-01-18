@@ -56,7 +56,7 @@ public class CartDao {
 					String name=rs.getString("name");
 					int EA = rs.getInt("EA");
 					int price = rs.getInt("price");
-					float percent = rs.getInt("percent");
+					float percent = rs.getFloat("percent");
 					String thumb_save=rs.getString("thumb_save");
 					int cartnum = rs.getInt("cartnum");
 					

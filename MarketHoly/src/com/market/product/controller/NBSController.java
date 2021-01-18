@@ -31,8 +31,6 @@ public class NBSController extends HttpServlet{
 		int startRow = pu.getStartRow()-1;
 		ArrayList<ProductDto> list = dao.getNBSList(startRow, filter);
 		
-
-		
 		req.setAttribute("filter", filter);
 		req.setAttribute("pu", pu);
 		req.setAttribute("list", list);
