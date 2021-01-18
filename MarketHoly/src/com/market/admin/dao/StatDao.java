@@ -28,54 +28,69 @@ public class StatDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-//			String sql = "SELECT ifnull(Sum(Decode(To_char(reg_date, 'mm'), '01', 1, \r\n" + 
-//					"                                               0)), 0) \"1월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '02', 1, \r\n" + 
-//					"                                               0)), 0) \"2월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '03', 1, \r\n" + 
-//					"                                               0)), 0) \"3월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '04', 1, \r\n" + 
-//					"                                               0)), 0) \"4월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '05', 1, \r\n" + 
-//					"                                               0)), 0) \"5월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '06', 1, \r\n" + 
-//					"                                               0)), 0) \"6월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '07', 1, \r\n" + 
-//					"                                               0)), 0) \"7월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '08', 1, \r\n" + 
-//					"                                               0)), 0) \"8월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '09', 1, \r\n" + 
-//					"                                               0)), 0) \"9월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '10', 1, \r\n" + 
-//					"                                               0)), 0) \"10월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '11', 1, \r\n" + 
-//					"                                               0)), 0) \"11월\", \r\n" + 
-//					"       ifnull(Sum(Decode(To_char(reg_date, 'mm'), '12', 1, \r\n" + 
-//					"                                               0)), 0) \"12월\" \r\n" + 
-//					"FROM   (SELECT * \r\n" + 
-//					"        FROM   orders \r\n" + 
-//					"        WHERE  status = 5 \r\n" + 
-//					"               AND reg_date >= ? \r\n" + 
-//					"               AND reg_date <= ?) ";
-			String sql = "SELECT * \r\n" + 
-					"FROM   ( \r\n" + 
-					"              SELECT Decode (To_char(reg_date, 'MM'), '01', '1월', '02', '2월', '03', '3월', '04', '4월', '05', '5월', '06', '6월', '07', '7월', '08', '8월', '09', '9월', '10', '10월', '11', '11월', '12', '12월') AS mon , \r\n" + 
-					"                     reg_date \r\n" + 
-					"              FROM   orders \r\n" + 
-					"              WHERE  status = 5 \r\n" + 
-					"              AND    reg_date >= ? \r\n" + 
-					"              AND    reg_date <= ?) PIVOT( count(reg_date) FOR mon IN('1월'  AS \"1월\", \r\n" + 
-					"                                                                                 '2월'  AS \"2월\", \r\n" + 
-					"                                                                                 '3월'  AS \"3월\", \r\n" + 
-					"                                                                                 '4월'  AS \"4월\", \r\n" + 
-					"                                                                                 '5월'  AS \"5월\", \r\n" + 
-					"                                                                                 '6월'  AS \"6월\", \r\n" + 
-					"                                                                                 '7월'  AS \"7월\", \r\n" + 
-					"                                                                                 '8월'  AS \"8월\", \r\n" + 
-					"                                                                                 '9월'  AS \"9월\", \r\n" + 
-					"                                                                                 '10월' AS \"10월\", \r\n" + 
-					"                                                                                 '11월' AS \"11월\", \r\n" + 
-					"                                                                                 '12월' AS \"12월\") )";
+			String sql = "SELECT \n"
+					+ "    COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '01' then '1월'\n"
+					+ "        END\n"
+					+ "    ) AS '1월',\n"
+					+ "     COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '02' then '2월'\n"
+					+ "        END\n"
+					+ "    ) AS '2월',\n"
+					+ "    COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '03' then '3월'\n"
+					+ "        END\n"
+					+ "    ) AS '3월',\n"
+					+ "    COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '04' then '4월'\n"
+					+ "        END\n"
+					+ "    ) AS '4월',\n"
+					+ "    COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '05' then '5월'\n"
+					+ "        END\n"
+					+ "    ) AS '5월',\n"
+					+ "      COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '06' then '6월'\n"
+					+ "        END\n"
+					+ "    ) AS '6월',\n"
+					+ "      COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '07' then '7월'\n"
+					+ "        END\n"
+					+ "    ) AS '7월',\n"
+					+ "      COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '08' then '8월'\n"
+					+ "        END\n"
+					+ "    ) AS '8월',\n"
+					+ "      COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '09' then '9월'\n"
+					+ "        END\n"
+					+ "    ) AS '9월',\n"
+					+ "      COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '10' then '10월'\n"
+					+ "        END\n"
+					+ "    ) AS '10월',\n"
+					+ "      COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '11' then '11월'\n"
+					+ "        END\n"
+					+ "    ) AS '11월',\n"
+					+ "     COUNT(\n"
+					+ "        CASE (DATE_FORMAT(reg_date,'%m'))\n"
+					+ "            when '12' then '12월'\n"
+					+ "        END\n"
+					+ "    ) AS '12월' \n"
+					+ "FROM  orders \n"
+					+ "WHERE  status = 5 AND reg_date >= ? AND reg_date <= ?\n";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setDate(1, startDate);
@@ -111,52 +126,21 @@ public class StatDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-//			String sql = "SELECT Sum(Decode(To_char(reg_date, 'mm'), '01', price * 0.0001, \r\n" + 
-//					"                                           0)) \"1월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '02', price * 0.0001, \r\n" + 
-//					"                                           0)) \"2월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '03', price * 0.0001, \r\n" + 
-//					"                                           0)) \"3월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '04', price * 0.0001, \r\n" + 
-//					"                                           0)) \"4월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '05', price * 0.0001, \r\n" + 
-//					"                                           0)) \"5월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '06', price * 0.0001, \r\n" + 
-//					"                                           0)) \"6월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '07', price * 0.0001, \r\n" + 
-//					"                                           0)) \"7월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '08', price * 0.0001, \r\n" + 
-//					"                                           0)) \"8월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '09', price * 0.0001, \r\n" + 
-//					"                                           0)) \"9월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '10', price * 0.0001, \r\n" + 
-//					"                                           0)) \"10월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '11', price * 0.0001, \r\n" + 
-//					"                                           0)) \"11월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '12', price * 0.0001, \r\n" + 
-//					"                                           0)) \"12월\" \r\n" + 
-//					" FROM   (SELECT * \r\n" + 
-//					"        FROM   orders \r\n" + 
-//					"        WHERE  status = 5 and reg_date >= ? and reg_date <= ?) \r\n";
-			String sql = "SELECT * \r\n" + 
-					"FROM   ( \r\n" + 
-					"              SELECT Decode (To_char(reg_date, 'MM'), '01', '1월', '02', '2월', '03', '3월', '04', '4월', '05', '5월', '06', '6월', '07', '7월', '08', '8월', '09', '9월', '10', '10월', '11', '11월', '12', '12월') AS mon , \r\n" + 
-					"                     price \r\n" + 
-					"              FROM   orders \r\n" + 
-					"              WHERE  status = 5 \r\n" + 
-					"              AND    reg_date >= ? \r\n" + 
-					"              AND    reg_date <= ?) PIVOT( sum(price*0.0001) FOR mon IN ('1월'  AS \"1월\", \r\n" + 
-					"                                                                                    '2월'  AS \"2월\", \r\n" + 
-					"                                                                                    '3월'  AS \"3월\", \r\n" + 
-					"                                                                                    '4월'  AS \"4월\", \r\n" + 
-					"                                                                                    '5월'  AS \"5월\", \r\n" + 
-					"                                                                                    '6월'  AS \"6월\", \r\n" + 
-					"                                                                                    '7월'  AS \"7월\", \r\n" + 
-					"                                                                                    '8월'  AS \"8월\", \r\n" + 
-					"                                                                                    '9월'  AS \"9월\", \r\n" + 
-					"                                                                                    '10월' AS \"10월\", \r\n" + 
-					"                                                                                    '11월' AS \"11월\", \r\n" + 
-					"                                                                                    '12월' AS \"12월\") )";
+			String sql = "SELECT \n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='01',price * 0.0001,0)) AS '1월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='02',price * 0.0001,0)) AS '2월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='03',price * 0.0001,0)) AS '3월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='04',price * 0.0001,0)) AS '4월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='05',price * 0.0001,0)) AS '5월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='06',price * 0.0001,0)) AS '6월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='07',price * 0.0001,0)) AS '7월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='08',price * 0.0001,0)) AS '8월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='09',price * 0.0001,0)) AS '9월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='10',price * 0.0001,0))AS '10월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='11',price * 0.0001,0)) AS '11월',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%m')='12',price * 0.0001,0)) AS '12월'\n"
+					+ "FROM  orders \n"
+					+ " WHERE  status = 5 AND reg_date >= ? AND reg_date <= ?";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setDate(1, startDate);
@@ -192,111 +176,105 @@ public class StatDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-//			String sql = "SELECT Sum(Decode(To_char(reg_date, 'dd'), '01', 1, \r\n" + 
-//					"                                           0)) \"1일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '02', 1, \r\n" + 
-//					"                                           0)) \"2일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '03', 1, \r\n" + 
-//					"                                           0)) \"3일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '04', 1, \r\n" + 
-//					"                                           0)) \"4일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '05', 1, \r\n" + 
-//					"                                           0)) \"5일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '06', 1, \r\n" + 
-//					"                                           0)) \"6일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '07', 1, \r\n" + 
-//					"                                           0)) \"7일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '08', 1, \r\n" + 
-//					"                                           0)) \"8일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '09', 1, \r\n" + 
-//					"                                           0)) \"9일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '10', 1, \r\n" + 
-//					"                                           0)) \"10일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '11', 1, \r\n" + 
-//					"                                           0)) \"11일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '12', 1, \r\n" + 
-//					"                                           0)) \"12일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '13', 1, \r\n" + 
-//					"                                           0)) \"13일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '14', 1, \r\n" + 
-//					"                                           0)) \"14일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '15', 1, \r\n" + 
-//					"                                           0)) \"15일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '16', 1, \r\n" + 
-//					"                                           0)) \"16일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '17', 1, \r\n" + 
-//					"                                           0)) \"17일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '18', 1, \r\n" + 
-//					"                                           0)) \"18일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '19', 1, \r\n" + 
-//					"                                           0)) \"19일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '20', 1, \r\n" + 
-//					"                                           0)) \"20일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '21', 1, \r\n" + 
-//					"                                           0)) \"21일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '22', 1, \r\n" + 
-//					"                                           0)) \"22일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '23', 1, \r\n" + 
-//					"                                           0)) \"23일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '24', 1, \r\n" + 
-//					"                                           0)) \"24일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '25', 1, \r\n" + 
-//					"                                           0)) \"25일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '26', 1, \r\n" + 
-//					"                                           0)) \"26일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '27', 1, \r\n" + 
-//					"                                           0)) \"27일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '28', 1, \r\n" + 
-//					"                                           0)) \"28일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '29', 1, \r\n" + 
-//					"                                           0)) \"29일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '30', 1, \r\n" + 
-//					"                                           0)) \"30일\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'dd'), '31', 1, \r\n" + 
-//					"                                           0)) \"31일\" \r\n" + 
-//					"FROM   (SELECT * \r\n" + 
-//					"        FROM   orders \r\n" + 
-//					"        WHERE  status = 5 \r\n" + 
-//					"               AND reg_date >= ? \r\n" + 
-//					"               AND reg_date <= ?) ";
-			String sql = "SELECT * \r\n" + 
-					"FROM   ( \r\n" + 
-					"              SELECT Decode (To_char(reg_date, 'dd'), '01', '1일', '02', '2일', '03', '3일', '04', '4일', '05', '5일', '06', '6일', '07', '7일', '08', '8일', '09', '9일', '10', '10일', '11', '11일', '12', '12일', '13', '13일', '14', '14일', '15', '15일', '16', '16일', '17', '17일', '18', '18일', '19', '19일', '20', '20일', '21', '22일', '23', '24일', '25', '25일', '26', '26일', '27', '27일', '28', '29일', '30', '30일', '31', '31일') AS day , \r\n" + 
-					"                     reg_date \r\n" + 
-					"              FROM   orders \r\n" + 
-					"              WHERE  status = 5 \r\n" + 
-					"              AND    reg_date >= ? \r\n" + 
-					"              AND    reg_date <= ?) PIVOT( count(reg_date) FOR day IN ('1일'  AS \"1일\", \r\n" + 
-					"                                                                                  '2일'  AS \"2일\", \r\n" + 
-					"                                                                                  '3일'  AS \"3일\", \r\n" + 
-					"                                                                                  '4일'  AS \"4일\", \r\n" + 
-					"                                                                                  '5일'  AS \"5일\", \r\n" + 
-					"                                                                                  '6일'  AS \"6일\", \r\n" + 
-					"                                                                                  '7일'  AS \"7일\", \r\n" + 
-					"                                                                                  '8일'  AS \"8일\", \r\n" + 
-					"                                                                                  '9일'  AS \"9일\", \r\n" + 
-					"                                                                                  '10일' AS \"10일\", \r\n" + 
-					"                                                                                  '11일' AS \"11일\", \r\n" + 
-					"                                                                                  '12일' AS \"12일\", \r\n" + 
-					"                                                                                  '13일' AS \"13일\", \r\n" + 
-					"                                                                                  '14일' AS \"14일\", \r\n" + 
-					"                                                                                  '15일' AS \"15일\", \r\n" + 
-					"                                                                                  '16일' AS \"16일\", \r\n" + 
-					"                                                                                  '17일' AS \"17일\", \r\n" + 
-					"                                                                                  '18일' AS \"18일\", \r\n" + 
-					"                                                                                  '19일' AS \"19일\", \r\n" + 
-					"                                                                                  '20일' AS \"20일\", \r\n" + 
-					"                                                                                  '21일' AS \"21일\", \r\n" + 
-					"                                                                                  '22일' AS \"22일\", \r\n" + 
-					"                                                                                  '23일' AS \"23일\", \r\n" + 
-					"                                                                                  '24일' AS \"24일\", \r\n" + 
-					"                                                                                  '25일' AS \"25일\", \r\n" + 
-					"                                                                                  '26일' AS \"26일\", \r\n" + 
-					"                                                                                  '27일' AS \"27일\", \r\n" + 
-					"                                                                                  '28일' AS \"28일\", \r\n" + 
-					"                                                                                  '29일' AS \"29일\", \r\n" + 
-					"                                                                                  '30일' AS \"30일\", \r\n" + 
-					"                                                                                  '31일' AS \"31일\") )";
+
+			String sql = "SELECT \n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '01' then '1일' END  ) AS '1일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '02' then '2일' END  ) AS '2일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '03' then '3일' END  ) AS '3일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '04' then '4일' END  ) AS '4일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '05' then '5일' END  ) AS '5일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '06' then '6일' END  ) AS '6일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '07' then '7일' END  ) AS '7일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '08' then '8일' END  ) AS '8일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '09' then '9일' END  ) AS '9일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '10' then '10일' END  ) AS '10일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '11' then '11일' END  ) AS '11일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '12' then '12일' END  ) AS '12일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '13' then '13일' END  ) AS '13일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '14' then '14일' END  ) AS '14일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '15' then '15일' END  ) AS '15일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '16' then '16일' END  ) AS '16일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '17' then '17일' END  ) AS '17일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '18' then '18일' END  ) AS '18일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '19' then '19일' END  ) AS '19일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '20' then '20일' END  ) AS '20일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '21' then '21일' END  ) AS '21일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '22' then '22일' END  ) AS '22일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '23' then '23일' END  ) AS '23일',\n"
+					+ "    COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '24' then '24일' END  ) AS '24일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '25' then '25일' END  ) AS '25일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '26' then '26일' END  ) AS '26일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '27' then '27일' END  ) AS '27일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '28' then '28일' END  ) AS '28일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '29' then '29일' END  ) AS '29일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '30' then '30일' END  ) AS '30일',\n"
+					+ "	COUNT(\n"
+					+ "		CASE (DATE_FORMAT(reg_date,'%d'))\n"
+					+ "		when '31' then '31일' END  ) AS '31일'\n"
+					+ "	\n"
+					+ "	\n"
+					+ "FROM  orders\n"
+					+ "WHERE  status = 5 AND reg_date >= ? AND reg_date <= ?";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setDate(1, startDate);
@@ -352,71 +330,40 @@ public class StatDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-//			String sql = "SELECT Sum(Decode(To_char(reg_date, 'mm'), '01', price * 0.0001, \r\n" + 
-//					"                                           0)) \"1월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '02', price * 0.0001, \r\n" + 
-//					"                                           0)) \"2월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '03', price * 0.0001, \r\n" + 
-//					"                                           0)) \"3월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '04', price * 0.0001, \r\n" + 
-//					"                                           0)) \"4월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '05', price * 0.0001, \r\n" + 
-//					"                                           0)) \"5월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '06', price * 0.0001, \r\n" + 
-//					"                                           0)) \"6월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '07', price * 0.0001, \r\n" + 
-//					"                                           0)) \"7월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '08', price * 0.0001, \r\n" + 
-//					"                                           0)) \"8월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '09', price * 0.0001, \r\n" + 
-//					"                                           0)) \"9월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '10', price * 0.0001, \r\n" + 
-//					"                                           0)) \"10월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '11', price * 0.0001, \r\n" + 
-//					"                                           0)) \"11월\", \r\n" + 
-//					"       Sum(Decode(To_char(reg_date, 'mm'), '12', price * 0.0001, \r\n" + 
-//					"                                           0)) \"12월\" \r\n" + 
-//					" FROM   (SELECT * \r\n" + 
-//					"        FROM   orders \r\n" + 
-//					"        WHERE  status = 5 and reg_date >= ? and reg_date <= ?) \r\n";
-			String sql = "SELECT * \r\n" + 
-					"FROM   ( \r\n" + 
-					"              SELECT Decode (To_char(reg_date, 'dd'), '01', '1일', '02', '2일', '03', '3일', '04', '4일', '05', '5일', '06', '6일', '07', '7일', '08', '8일', '09', '9일', '10', '10일', '11', '11일', '12', '12일', '13', '13일', '14', '14일', '15', '15일', '16', '16일', '17', '17일', '18', '18일', '19', '19일', '20', '20일', '21', '22일', '23', '24일', '25', '25일', '26', '26일', '27', '27일', '28', '29일', '30', '30일', '31', '31일') AS day , \r\n" + 
-					"                     price \r\n" + 
-					"              FROM   orders \r\n" + 
-					"              WHERE  status = 5 \r\n" + 
-					"              AND    reg_date >= ? \r\n" + 
-					"              AND    reg_date <= ?) PIVOT( sum(price*0.0001) FOR day IN ('1일'  AS \"1일\", \r\n" + 
-					"                                                                             '2일'  AS \"2일\", \r\n" + 
-					"                                                                             '3일'  AS \"3일\", \r\n" + 
-					"                                                                             '4일'  AS \"4일\", \r\n" + 
-					"                                                                             '5일'  AS \"5일\", \r\n" + 
-					"                                                                             '6일'  AS \"6일\", \r\n" + 
-					"                                                                             '7일'  AS \"7일\", \r\n" + 
-					"                                                                             '8일'  AS \"8일\", \r\n" + 
-					"                                                                             '9일'  AS \"9일\", \r\n" + 
-					"                                                                             '10일' AS \"10일\", \r\n" + 
-					"                                                                             '11일' AS \"11일\", \r\n" + 
-					"                                                                             '12일' AS \"12일\", \r\n" + 
-					"                                                                             '13일' AS \"13일\", \r\n" + 
-					"                                                                             '14일' AS \"14일\", \r\n" + 
-					"                                                                             '15일' AS \"15일\", \r\n" + 
-					"                                                                             '16일' AS \"16일\", \r\n" + 
-					"                                                                             '17일' AS \"17일\", \r\n" + 
-					"                                                                             '18일' AS \"18일\", \r\n" + 
-					"                                                                             '19일' AS \"19일\", \r\n" + 
-					"                                                                             '20일' AS \"20일\", \r\n" + 
-					"                                                                             '21일' AS \"21일\", \r\n" + 
-					"                                                                             '22일' AS \"22일\", \r\n" + 
-					"                                                                             '23일' AS \"23일\", \r\n" + 
-					"                                                                             '24일' AS \"24일\", \r\n" + 
-					"                                                                             '25일' AS \"25일\", \r\n" + 
-					"                                                                             '26일' AS \"26일\", \r\n" + 
-					"                                                                             '27일' AS \"27일\", \r\n" + 
-					"                                                                             '28일' AS \"28일\", \r\n" + 
-					"                                                                             '29일' AS \"29일\", \r\n" + 
-					"                                                                             '30일' AS \"30일\", \r\n" + 
-					"                                                                             '31일' AS \"31일\") )";
+			String sql = "SELECT \n"
+					+ "	sum(if(DATE_FORMAT(reg_date,'%d')='01',price * 0.0001,0)) AS '1일',\n"
+					+ "	sum(if(DATE_FORMAT(reg_date,'%d')='02',price * 0.0001,0)) AS '2일',\n"
+					+ "	sum(if(DATE_FORMAT(reg_date,'%d')='03',price * 0.0001,0)) AS '3일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='04',price * 0.0001,0)) AS '4일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='05',price * 0.0001,0)) AS '5일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='06',price * 0.0001,0)) AS '6일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='07',price * 0.0001,0)) AS '7일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='08',price * 0.0001,0)) AS '8일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='09',price * 0.0001,0)) AS '9일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='10',price * 0.0001,0)) AS '10일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='11',price * 0.0001,0)) AS '11일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='12', price * 0.0001,0)) AS '12일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='13',price * 0.0001,0)) AS '13일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='14',price * 0.0001,0)) AS '14일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='15',price * 0.0001,0)) AS '15일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='16',price * 0.0001,0)) AS '16일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='17',price * 0.0001,0)) AS '17일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='18',price * 0.0001,0)) AS '18일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='19',price * 0.0001,0)) AS '19일',\n"
+					+ "	sum(if(DATE_FORMAT(reg_date,'%d')='20',price * 0.0001,0)) AS '20일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='21',price * 0.0001,0)) AS '21일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='22',price * 0.0001,0)) AS '22일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='23',price * 0.0001,0)) AS '23일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='24',price * 0.0001,0)) AS '24일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='25',price * 0.0001,0)) AS '25일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='26',price * 0.0001,0)) AS '26일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='27',price * 0.0001,0)) AS '27일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='28',price * 0.0001,0)) AS '28일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='29',price * 0.0001,0)) AS '29일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='30',price * 0.0001,0)) AS '30일',\n"
+					+ "    sum(if(DATE_FORMAT(reg_date,'%d')='31',price * 0.0001,0)) AS '31일'\n"
+					+ "FROM  orders \n"
+					+ "WHERE  status = 5 AND reg_date >= ? AND reg_date <= ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setDate(1, startDate);
 			pstmt.setDate(2, endDate);
@@ -472,20 +419,17 @@ public class StatDao {
 		ArrayList<StatGenderDto> list = new ArrayList<StatGenderDto>();
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT Decode(gender, 1, '남자', \r\n" + 
-					"                      '여자') gender, \r\n" + 
-					"       Count(*)                 cnt \r\n" + 
-					"FROM   member \r\n" + 
-					"WHERE  num IN(SELECT num \r\n" + 
-					"              FROM   orders \r\n" + 
-					"              WHERE  status = 5) \r\n" + 
-					"GROUP  BY gender ";
+			String sql = "SELECT if(m.gender= 1,'남자', '여자') as 'gender', Count(o.onum) cnt \n"
+					+ "FROM  orders o left outer join member m on o.num = m.num \n"
+					+ "WHERE m.num IN(SELECT o.num\n"
+					+ "FROM  orders   WHERE  status = 5)\n"
+					+ "GROUP  BY gender ";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				String gender = rs.getString("gender");
 				int cnt = rs.getInt("cnt");
-				list.add(new StatGenderDto(gender, cnt));
+				String gender = rs.getString("gender");
+				list.add(new StatGenderDto(cnt,gender));
 			}
 			return list;
 		} catch (SQLException e) {

@@ -27,7 +27,7 @@ public class StatGenderController extends HttpServlet{
 		for(StatGenderDto dto : statDto) {
 			JSONObject json = new JSONObject();
 			json.put("gender",dto.getGender());
-			json.put("cnt", dto.getCnt());
+			json.put("cnt",dto.getCnt());
 			jarr.put(json);
 		}
 		
