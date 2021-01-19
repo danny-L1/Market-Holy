@@ -37,75 +37,82 @@
 	<hr style="border: solid 1px purple;">
 </div>
 <form action="${cp}/order.do" method="post">
-<div id="2" class="container" style='width: 1000px;'>
-	<table class="table table-hover">
-		<tr>
-			<th><input type="checkbox" id="allchecked" onchange="allcheck()">
-				전체선택</th>
-			<th></th>
-			<th>상품정보</th>
-			<th>수량</th>
-			<th>상품금액</th>
-			<!-- 장바구니에 담겨있는 리스트 얻어오기 -->
-		</tr>
-
-
-		<c:forEach var="cart1" items="${requestScope.cart }" varStatus="status">
-			<input type="hidden" name="pnum" value="${cart1.pnum }">
+	<div id="2" class="container" style='width: 1000px;'>
+		<table class="table table-hover">
 			<tr>
-				<td><input type="checkbox" size="5" name="undercheck" value="${cart1.cartnum}" onchange="showBox()"></td>
-				<td><img src="${cp }/img/${cart1.thumb_save}" width="100px"
-					height="100px">
-				<td><input type="text" value="${cart1.name}" name="pname" readonly style="border:0 ;text-align: center;"></td>
-				<td><button type="button" class="btn btn-default" onclick="minus(${status.index})">
-						<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-					</button>&nbsp <input type="text" name="EA" class="EA" value="${cart1.EA}" readonly style="border:0 ;text-align: center;">&nbsp
-					<button type="button" class="btn btn-default" onclick="plus(${status.index})">
-					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-					</button></td>
-				<td>
-				<c:set var="sprice" value="${cart1.price*(1-cart1.percent) }" /> <!-- 세일가격 -->
-				<input type="hidden" id="orgsum" value="${cart1.price*cart1.EA}"> 
-				<b> <c:choose>
-						<c:when test="${cart1.percent==1 || cart1.percent==0.0}">
-							<input type="hidden" name = "discount" class ="discount" value ="0">
-							<input type="hidden" name="cart-price" value='${cart1.price}'> 
-							<label class="sum" id="sum">
-								<fmt:formatNumber value="${cart1.price*cart1.EA}" type="number" />
-							</label>
-							원
-						</c:when>
-						<c:otherwise>
-						
-							<input type="hidden" name = "discount" class ="discount" value = 
-								"<fmt:formatNumber value="${(cart1.price - sprice) * cart1.EA }" type="number" />">
-							<input type="hidden" name="cart-price" value="${(sprice+(1-(sprice%1))%1 )*cart1.EA}"> 
-							
-								<span class="orp"><del>${cart1.price *cart1.EA}원</del></span>
-							
-							<span class="emph">→</span>
-							<label class="sum" id="sum">
-								<fmt:formatNumber value="${(sprice+(1-(sprice%1))%1 )*cart1.EA}" type="number" />
-							</label>원
-						</c:otherwise>
-					</c:choose>
-					
-				</b>
-				
-				</td>
+				<th><input type="checkbox" id="allchecked"
+					onchange="allcheck()"> 전체선택</th>
+				<th></th>
+				<th>상품정보</th>
+				<th>수량</th>
+				<th>상품금액</th>
+				<!-- 장바구니에 담겨있는 리스트 얻어오기 -->
 			</tr>
-		</c:forEach>
-	</table>
-	<hr style="border: solid 1px purple;">
-	<button type="submit" class="btn" id="selectdel" style="background-color: purple;color:white">선택삭제</button>
-	<hr style="border: solid 1px purple;">
-</div>
 
-	<div id="outbox" class="container" style="padding-left: 110px; padding-top: 100px">
+
+			<c:forEach var="cart1" items="${requestScope.cart }"
+				varStatus="status">
+				<input type="hidden" name="pnum" value="${cart1.pnum }">
+				<tr>
+					<td><input type="checkbox" size="5" name="undercheck"
+						value="${cart1.cartnum}" onchange="showBox()"></td>
+					<td><img src="${cp }/img/${cart1.thumb_save}" width="100px"
+						height="100px">
+					<td><input type="text" value="${cart1.name}" name="pname"
+						readonly style="border: 0; text-align: center;"></td>
+					<td><button type="button" class="btn btn-default"
+							onclick="minus(${status.index})">
+							<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+						</button>&nbsp <input type="text" name="EA" class="EA" value="${cart1.EA}"
+						readonly style="border: 0; text-align: center;">&nbsp
+						<button type="button" class="btn btn-default"
+							onclick="plus(${status.index})">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</button></td>
+					<td><c:set var="sprice"
+							value="${cart1.price*(1-cart1.percent) }" /> <!-- 세일가격 --> <input
+						type="hidden" id="orgsum" value="${cart1.price*cart1.EA}">
+						<b> <c:choose>
+								<c:when test="${cart1.percent==1 || cart1.percent==0.0}">
+									<input type="hidden" name="discount" class="discount" value="0">
+									<input type="hidden" name="cart-price" value='${cart1.price}'>
+									<label class="sum" id="sum"> <fmt:parseNumber
+											value="${cart1.price*cart1.EA}" integerOnly= "true" />
+									</label>
+									원
+						</c:when>
+								<c:otherwise>
+									<input type="hidden" name="discount" class="discount"
+										value="<fmt:parseNumber  integerOnly= "true" value="${(cart1.price - sprice) * cart1.EA }"/>">
+									<input type="hidden" name="cart-price"
+										value="${(sprice+(1-(sprice%1))%1 )*cart1.EA}">
+
+									<span class="orp"><del>${cart1.price *cart1.EA}원</del></span>
+
+									<span class="emph">→</span>
+									<label class="sum" id="sum"> <fmt:parseNumber
+											integerOnly="true"
+											value="${(sprice+(1-(sprice%1))%1 )*cart1.EA} " />
+									</label>원
+						</c:otherwise>
+							</c:choose>
+
+					</b></td>
+				</tr>
+			</c:forEach>
+		</table>
+		<hr style="border: solid 1px purple;">
+		<button type="submit" class="btn" id="selectdel"
+			style="background-color: purple; color: white">선택삭제</button>
+		<hr style="border: solid 1px purple;">
+	</div>
+
+	<div id="outbox" class="container"
+		style="padding-left: 110px; padding-top: 100px">
 		<div id="box1" class="a b">
 			<h3>상품금액</h3>
-			<br>
-			<input type="text" name="total" id="total" readonly style="border:0 ;text-align: center;">
+			<br> <input type="text" name="total" id="total" readonly
+				style="border: 0; text-align: center;">
 
 		</div>
 		<div class="mini b">
@@ -113,12 +120,11 @@
 		</div>
 
 		<div id="box2" class="a b">
-			<h3>상품할인금액 </h3>
-			<br>
-			<input type="text" name="DCprice" id="DCprice" readonly style="border:0 ;text-align: center;">
-			<br>
-			<input type="hidden" name="DCprice"> 
-			
+			<h3>상품할인금액</h3>
+			<br> <input type="text" name="DCprice" id="DCprice" readonly
+				style="border: 0; text-align: center;"> <br> <input
+				type="hidden" name="DCprice">
+
 			<!-- cart.percent -->
 		</div>
 		<div class="mini b">
@@ -126,8 +132,9 @@
 		</div>
 
 		<div id="box3" class="a b">
-			<h3>배송비</h3><br>
-			<input type="text" value="2500" name="shipping" id="shipping" readonly style="border:0 ;text-align: center;">
+			<h3>배송비</h3>
+			<br> <input type="text" value="2500" name="shipping"
+				id="shipping" readonly style="border: 0; text-align: center;">
 		</div>
 
 		<div class="mini b">
@@ -135,16 +142,18 @@
 		</div>
 
 		<div id="box3" class="a b">
-			<h3>결제금액</h3><br>
-			<input type="text" value="" name="finalprice" id="finalprice" readonly style="border:0 ;text-align: center;">
-			
+			<h3>결제금액</h3>
+			<br> <input type="text" value="" name="finalprice"
+				id="finalprice" readonly style="border: 0; text-align: center;">
+
 
 		</div>
 	</div>
 	<div class="container" style='width: 1000px;' align="center">
-	<hr style="border: solid 1px purple;">
-		<button type="submit" class="btn btn-lg" style="background-color: purple;color:white" >주문하기</button>
-		
+		<hr style="border: solid 1px purple;">
+		<button type="submit" class="btn btn-lg"
+			style="background-color: purple; color: white">주문하기</button>
+
 	</div>
 </form>
 

@@ -99,7 +99,7 @@ public class QnaDao {
 
 	public ArrayList<QnaDto> list(int startRow, int endRow, int pnums) {
 		String sql = "select * from qna \r\n" + 
-				"where pnum = ? and ref >= 0 and del_yn = 'N' \r\n" + 
+				"where pnum = ? and ref <= 0 and del_yn = 'N' \r\n" + 
 				"order by qnum desc\r\n" + 
 				"limit ?,?";
 		

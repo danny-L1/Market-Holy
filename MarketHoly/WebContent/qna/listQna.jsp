@@ -26,12 +26,7 @@
 					<tr onclick="showHidden(${vo.qnum},'${vo.id }','${vo.locker }')">
 						<c:set var="cNum" value="${vo.qnum-1}"/>
 						<td>${count}</td>
-						<td>
-							<c:if test="${vo.ref == -1 }">
-								<c:forEach var="i" begin="${startPageNum }" end="${endPageNum }">
-									[re]&nbsp;
-								</c:forEach> 
-							</c:if>
+						<td onclick="showReply(${vo.qnum},${vo.ref})">
 							${vo.title } 
 							<c:if test="${vo.locker == 'Y' }">
 								<img src="${pageContext.request.contextPath }/img/locker.jpg" width="30px" height="30px">
@@ -40,9 +35,10 @@
 						<td>${vo.id }</td>
 						<td>${vo.reg_date }</td>
 					</tr>
-					<tr id='${vo.qnum }' style='display: none;'>
-						<td>${vo.content }</td>
+					<tr height="100" id='${vo.qnum }' style='display: none'>
+						<td colspan="4">${vo.content }</td>					
 					</tr>
+					<tr height="100" id="replyTitle${vo.qnum }" style="background-color: ghostwhite; display: none"></tr>					
 				</tbody>
 				
 			</c:forEach>
@@ -100,16 +96,33 @@
 <script>
 	function showHidden(dtoQnum,dtoId,dtoLocker) {
 		var id =document.getElementById(dtoQnum);
-					
+		var re =document.getElementById("replyTitle"+dtoQnum);			
 		if(dtoId == '${sessionScope.memberDto.id}' || dtoLocker=='N' ){
 			if(id.style.display == 'none'){ 
-				id.style.display = 'block' ;
+				id.style.display = 'table-row' ;
+				re.style.display = 'table-row' ;
 			}else{ 
 				id.style.display = 'none' ;
+				re.style.display = 'none' ;
 			}
 		}else{
 			alert("비밀글입니다.");
 		}
+	}
+	function showReply(qnum,ref) {
+		if(ref==0){
+			 $.getJSON("${cp }/admin/ansGet.do?qnum=" + qnum
+					 , function(data){
+			  var str = "";
+			  $(data).each(function(){
+			   str +="<td>[re]</td>"
+			   		+ "<td>" + this.title + "</td>"
+			   		+ "<td colspan='2'>" + this.content + "</td>";
+			  });
+			  $("#replyTitle"+qnum).html(str);
+			 });
+		}
+		
 	}
 	
 </script>

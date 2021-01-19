@@ -27,12 +27,12 @@
 			</tr>
 				<c:forEach var="cartnum" items="${cartnum }" varStatus="status">
 					<input type="hidden" name="pnum" value="${pnum[status.index]}">
-					<input type="hidden" name="cartPrice" value="${cartPrice[status.index]}">
+					<input type="hidden" name="cartPrice" value="<fmt:parseNumber integerOnly= "true"  value="${cartPrice[status.index]}"/>">
 					<tr>
 						<td><input type="checkbox" size="5" name="undercheck"></td>
 						<td>${pname[status.index]}<input type="hidden" name="pname" value=${pname[status.index]}></td>
 						<td>${EA[status.index]}<input type="hidden" name="EA" value=${EA[status.index]}></td>
-						<td><fmt:formatNumber value="${cartPrice[status.index] * EA[status.index]}" type="number" />
+						<td><fmt:parseNumber integerOnly= "true"  value="${cartPrice[status.index] * EA[status.index]}" type="number" />
 						</td>
 					</tr>
 					
@@ -127,7 +127,6 @@
 	<div id="8" class="container" style='width: 1000px;'>
  		<h1 style = 'text-align:center'>결제확인</h1>
  		<hr style="border: solid 1px purple;">
- 		<h1>${DCprice[0] }</h1>
  		<c:choose>
  			<c:when test="${DCprice[0] == '' }">
  				<h3>할인금액 :0 </h3>
@@ -136,11 +135,11 @@
  			<c:otherwise>
  				<h3>할인금액 :${DCprice[0] } </h3>
  				
-				<input type="hidden" name="DCprice" readonly="readonly"   value="<fmt:formatNumber 
-				value="${DCprice[0] }" type="number" />">
+				<input type="hidden" name="DCprice" readonly="readonly"  value="<fmt:parseNumber  integerOnly= "true" 
+					value="${DCprice[0] }" />"/>
  			</c:otherwise>
  		</c:choose>
-		<h3>총 결제금액 :<fmt:formatNumber value="${finalprice[0]}" type="number" /> </h3>
+		<h3>총 결제금액 :<fmt:parseNumber integerOnly= "true"  value="${finalprice[0]}" type="number" /> </h3>
 		<input type="hidden" name="finalprice" value="${finalprice[0]}">
 		<span class='text-muted'> 결제 금액을 정확하게 확인 후 결제를 진행하세요 </span>
 		<hr style="border: solid 1px purple;">

@@ -41,15 +41,15 @@ protected void service(HttpServletRequest req, HttpServletResponse resp) throws 
 			}
 			
 			int point=Integer.parseInt(req.getParameter("point"));
-			System.out.println("use_point:"+use_point+",point:"+point);
 			if (use_point>0 && point >= use_point) {
 				
 				paydao.updatepoint(use_point, id);
-				System.out.println("업");
+			
 			}
 			int finalprice=Integer.parseInt(req.getParameter("finalprice"));
 			int sale_price=Integer.parseInt(req.getParameter("DCprice"));
 			int pay_way=Integer.parseInt(req.getParameter("chpay"));
+			
 			String chaddr = req.getParameter("chaddr");
 			String addr = "";
 			if(chaddr.equals("oraddr")) {

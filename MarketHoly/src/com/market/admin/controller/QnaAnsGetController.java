@@ -25,6 +25,7 @@ public class QnaAnsGetController extends HttpServlet{
 		QnaAdminDao qnaDao = QnaAdminDao.getInstance();
 		int qnum = Integer.parseInt(req.getParameter("qnum"));
 		
+		
 		QnaAdminDto dto = qnaDao.getAnswer(qnum);
 		JSONObject json = new JSONObject();
 		json.put("title", dto.getTitle());
