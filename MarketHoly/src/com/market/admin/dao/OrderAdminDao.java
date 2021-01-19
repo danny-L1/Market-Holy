@@ -30,35 +30,31 @@ public class OrderAdminDao {
 		try {
 			con = JDBCUtil.getConn();
 			String sql = "";
-			if(kind.equals("pname")) {
-				sql = "SELECT a.*,\r\n" + 
-						"(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n" + 
-						"(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n" + 
-						"(SELECT pname || case bb.cnt when 1 then ' 외 ' || bb.cnt || '건' end as prodName\r\n" + 
-						"FROM   order_product aa, \r\n" + 
-						"(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n" + 
-						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 1) prodName,\r\n" + 
-						"(select rating from member where num = a.num and del_yn='N') rating \r\n" + 
-						"FROM   orders a \r\n" + 
-						"WHERE status IN( " + pStatus + " ) " + 
-						"ORDER  BY reg_date DESC limit ?,6";
-				
-			}else {
-				sql = "SELECT a.*,\r\n" + 
-						"(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n" + 
-						"(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n" + 
-						"(SELECT pname as prodName \r\n" + 
-						"FROM   order_product aa, \r\n" + 
-						"(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n" + 
-						"WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 1) prodName,\r\n" + 
-						"(select rating from member where num = a.num and del_yn='N') rating \r\n" + 
-						"FROM   orders a \r\n" + 
-						"WHERE status IN( " + pStatus + " ) " + 
-						"ORDER  BY reg_date DESC limit ?,6";
+			if (word != null ) {
+				sql = "SELECT a.*,\r\n"
+						+ "(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n"
+						+ "(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n"
+						+ "(SELECT pname as prodName \r\n" + "FROM   order_product aa, \r\n"
+						+ "(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n"
+						+ "WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 1) prodName,\r\n"
+						+ "(select rating from member where num = a.num and del_yn='N') rating \r\n"
+						+ "FROM   orders a \r\n" + "WHERE id like '%" + word + "%' and status IN( " + pStatus + " )  "
+						+ "ORDER  BY reg_date DESC limit ?,6";
+
+			} else {
+				sql = "SELECT a.*,\r\n"
+						+ "(SELECT NAME FROM common WHERE type = '주문상태' AND val = status)  statusName, \r\n"
+						+ "(SELECT NAME FROM common WHERE type = '결제 방법' AND val = pay_way) pay_wayName,\r\n"
+						+ "(SELECT pname as prodName \r\n" + "FROM   order_product aa, \r\n"
+						+ "(SELECT onum, Count(*) cnt FROM   order_product GROUP  BY onum) bb \r\n"
+						+ "WHERE  aa.onum = a.onum AND aa.onum = bb.onum limit 1) prodName,\r\n"
+						+ "(select rating from member where num = a.num and del_yn='N') rating \r\n"
+						+ "FROM   orders a \r\n" + "WHERE status IN( " + pStatus + " ) "
+						+ "ORDER  BY reg_date DESC limit ?,6";
 			}
-				
+
 			pstmt = con.prepareStatement(sql);
-			//pstmt.setString(1, "% " + word + " %");
+			// pstmt.setString(1, "% " + word + " %");
 			pstmt.setInt(1, startRow);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
@@ -77,6 +73,7 @@ public class OrderAdminDao {
 				int status = rs.getInt("status");
 				list.add(new OrderAdminDto(onum, id, statusName, prodName, pay_yn, price, addr, pay_wayName, use_point,
 						reg_date, num, rating, status));
+
 			}
 			return list;
 		} catch (SQLException e) {
@@ -93,9 +90,14 @@ public class OrderAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
-					" FROM   orders a WHERE  status IN("+status+")";
-			
+			String sql = "";
+			if(word != null) {
+				sql = "SELECT ifnull(Count(*), 0) cnt " + 
+						" FROM  orders a WHERE id like '%" + word + "%' and status IN("+status+")";
+			}else {
+				sql = "SELECT ifnull(Count(*), 0) cnt \r\n" + 
+						" FROM   orders a WHERE  status IN("+status+")";
+			}
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			rs.next();
@@ -162,11 +164,8 @@ public class OrderAdminDao {
 					pstmt1.executeUpdate();
 
 					// 등급 수정
-					String sql2 = "SELECT ifnull(Sum(price),0) totalPurchase \r\n" 
-							+ "FROM   orders \r\n"
-							+ "WHERE  1 = 1 \r\n"
-							+ "       AND status = 5 \r\n"
-							+ "       AND num = ? and status = 5 ";
+					String sql2 = "SELECT ifnull(Sum(price),0) totalPurchase \r\n" + "FROM   orders \r\n"
+							+ "WHERE  1 = 1 \r\n" + "       AND status = 5 \r\n" + "       AND num = ? and status = 5 ";
 					pstmt2 = con.prepareStatement(sql2);
 					pstmt2.setInt(1, num);
 					rs = pstmt2.executeQuery();
@@ -198,7 +197,7 @@ public class OrderAdminDao {
 					rs2 = pstmt4.executeQuery();
 					rs2.next();
 					int use_point = rs2.getInt("use_point");
-					
+
 					String sql5 = "update member set point=point + ? where num = ?";
 					pstmt5 = con.prepareStatement(sql5);
 					pstmt5.setInt(1, use_point);
@@ -239,12 +238,9 @@ public class OrderAdminDao {
 		ArrayList<OrdDetailDto> list = new ArrayList<OrdDetailDto>();
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT a.*, \r\n" + 
-					"       (SELECT thumb_save \r\n" + 
-					"        FROM   product \r\n" + 
-					"        WHERE  pnum = a.pnum) thumb_save \r\n" + 
-					"FROM   order_product a \r\n" + 
-					"WHERE  onum = ? ";
+			String sql = "SELECT a.*, \r\n" + "       (SELECT thumb_save \r\n" + "        FROM   product \r\n"
+					+ "        WHERE  pnum = a.pnum) thumb_save \r\n" + "FROM   order_product a \r\n"
+					+ "WHERE  onum = ? ";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, pOnum);
 			rs = pstmt.executeQuery();
@@ -271,21 +267,15 @@ public class OrderAdminDao {
 		ResultSet rs = null;
 		try {
 			con = JDBCUtil.getConn();
-			String sql = "SELECT a.*, \r\n" + 
-					"       (SELECT NAME \r\n" + 
-					"        FROM   common \r\n" + 
-					"        WHERE  type = '주문상태' \r\n" + 
-					"               AND val = status)  statusName, \r\n" + 
-					"       (SELECT NAME \r\n" + 
-					"        FROM   common \r\n" + 
-					"        WHERE  type = '결제 방법' \r\n" + 
-					"               AND val = pay_way) pay_wayName \r\n" + 
-					"FROM   orders a \r\n" + 
-					"WHERE  onum = ? ";
+			String sql = "SELECT a.*, \r\n" + "       (SELECT NAME \r\n" + "        FROM   common \r\n"
+					+ "        WHERE  type = '주문상태' \r\n" + "               AND val = status)  statusName, \r\n"
+					+ "       (SELECT NAME \r\n" + "        FROM   common \r\n" + "        WHERE  type = '결제 방법' \r\n"
+					+ "               AND val = pay_way) pay_wayName \r\n" + "FROM   orders a \r\n"
+					+ "WHERE  onum = ? ";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, pOnum);
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				int onum = rs.getInt("onum");
 				String id = rs.getString("id");
 				String statusName = rs.getString("statusName");
@@ -296,7 +286,7 @@ public class OrderAdminDao {
 				int use_point = rs.getInt("use_point");
 				Date reg_date = rs.getDate("reg_date");
 				return new OrderAdminDto(onum, id, statusName, "", pay_yn, price, addr, pay_wayName, use_point,
-						reg_date,-1,-1,-1);
+						reg_date, -1, -1, -1);
 			}
 			return null;
 		} catch (SQLException e) {

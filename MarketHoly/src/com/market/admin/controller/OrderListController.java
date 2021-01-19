@@ -32,11 +32,10 @@ public class OrderListController extends HttpServlet {
 			word = "";
 		}
 		String status = req.getParameter("status");
-		if(status.equals("1")) {
-			status = "1,2,3,4";
-		}else {
-			status = "5,6";
+		if (status == null) {
+			status = "";
 		}
+
 		String spageNum = req.getParameter("pageNum");
 		int pageNum = 1;
 		if (spageNum != null) {

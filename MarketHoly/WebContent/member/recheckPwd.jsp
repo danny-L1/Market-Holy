@@ -18,7 +18,7 @@
            
             
             <div class="panel-body">
-                <form id="login-form" method="post" action="/Semi-MarketHoly/member/checkPwd.do">
+                <form id="login-form" method="post" action="${pageContext.request.contextPath }/member/checkPwd.do">
                     <strong>아이디</strong><br>    
                     ${sessionScope.memberDto.id} <br>
                     <strong>비밀번호</strong><br>
