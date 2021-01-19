@@ -109,7 +109,7 @@ h1, h2, h3 {
 			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		</button>
 	</h4>
-	<br> <input type="hidden" id="price" value="${dto.price }">
+	<br> <input type="hidden" id="price" value="<fmt:parseNumber integerOnly= "true" value="${sprice+(1-(sprice%1))%1 }" />">
 	<input type="hidden" id="stock" value="${dto.stock }">
 	<p class='text-muted' style="font-size: 0.9em;">
 		<!-- 판매단위 1팩
@@ -132,7 +132,8 @@ h1, h2, h3 {
 	<div id="t">
 		<h3>총 상품금액 :</h3>
 		<h1>
-			<label id="sum">${dto.price }</label>
+			<label id="sum"><fmt:formatNumber value="${sprice+(1-(sprice%1))%1 }"
+							type="number" /></label>
 		</h1>
 		원 <br>
 

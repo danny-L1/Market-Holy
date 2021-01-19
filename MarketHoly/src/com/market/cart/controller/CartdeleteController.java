@@ -20,7 +20,6 @@ public class CartdeleteController extends HttpServlet{
 		CartDao dao=CartDao.getInstance();
 	
 		String []cartnum=req.getParameterValues("undercheck");
-		System.out.println("cartnum:" + cartnum);
 		for (int j = 0; j < cartnum.length; j++) {
 			dao.deletecart(Integer.parseInt(cartnum[j]));
 		}

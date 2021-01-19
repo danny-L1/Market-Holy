@@ -102,7 +102,7 @@
 	}
 	function showReply(qnum,ref) {
 		if(ref==0){
-			 $.getJSON("${cp }/admin/ansGet.do?qnum=" + qnum
+			 $.getJSON("${cp }/ansGet.do?qnum=" + qnum
 					 , function(data){
 			  var str = "";
 			  $(data).each(function(){

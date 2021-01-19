@@ -415,7 +415,7 @@ nav {
 	function getAns(qnum) {
 		jQuery.ajax({
 			dataType:"JSON",
-			url: `${cp}/admin/ansGet.do`,
+			url: `${cp}/ansGet.do`,
 		 	method:"get",
 			data:{
 				qnum:qnum
